@@ -20,6 +20,15 @@
   <a href="https://qdrant.tech/"><img src="https://img.shields.io/badge/Memory-Qdrant_Vector_RAG-red.svg?style=for-the-badge&logo=qdrant&logoColor=white" alt="Qdrant"></a>
 </p>
 
+<p align="center">
+  <a href="#-what-is-anve-offsec">What is anve-offsec?</a> •
+  <a href="#-see-it-in-action">Demo</a> •
+  <a href="#-multipage-technical-documentation-index">Documentation</a> •
+  <a href="#-why-anve-offsec-the-feature-matrix">Feature Matrix</a> •
+  <a href="#-quick-start-up-in-60-seconds">Quick Start</a> •
+  <a href="#%EF%B8%8F-project-roadmap">Roadmap</a>
+</p>
+
 ---
 
 ## ⚡ What is `anve-offsec`?
@@ -49,6 +58,19 @@ It combines a **stateful Kali Linux core container** with the **Hermes AI Reason
 [+] Ingesting successful payload into Qdrant Vector Memory RAG...
 [+] PHASE_COMPLETE: Recon -> Scan -> Exploit -> Report (Time: 7m 42s)
 ```
+
+---
+
+## 📚 Multipage Technical Documentation Index
+
+Explore the complete sub-documentation system in [`docs/`](docs/):
+
+- 🏗️ **[Architecture & Microservice Spec](docs/ARCHITECTURE.md)** — Sidecar topology, DinD workers, OOB listeners (`28000–30000`).
+- 🧠 **[Hermes AI Reasoning Brain Spec](docs/HERMES_BRAIN.md)** — Multi-turn session persistence, 40+ agent prompts, phase completion signals.
+- 🧬 **[Self-Evolution & Vector RAG Spec](docs/SELF_EVOLUTION.md)** — Qdrant vector memory indexing, confidence score heuristics (`0.7`/`0.85`), strategy prompt injection.
+- 🛡️ **[Defensive Guardrails & Security](docs/GUARDRAILS_SECURITY.md)** — Prompt injection filters, destructive command interception, target scope auditing.
+- 🔬 **[Benchmark Case Studies](docs/CASE_STUDIES.md)** — Comprehensive execution logs for DVWA, Metasploitable2, and Auth Wall OpenClaw bypass.
+- 🤝 **[Contribution Guidelines](docs/CONTRIBUTING.md)** — How to add new specialized agents, tools, and submit pull requests.
 
 ---
 
@@ -142,13 +164,6 @@ Hermes acts as the stateful reasoning brain inside Kali Linux. It operates acros
 └───────────┘      └───────────────────┘           └───────────────────┘      └───────────┘
 ```
 
-### Session Resumption Protocol:
-Instead of sending disconnected requests, the execution runner resumes Hermes' conversation state on every turn:
-```bash
-hermes chat -Q --max-turns 30 -m kimi-k3 --resume 8f9b2a10-4c3e-4b9a-8a12-009182371abc -q "<Phase Instructions>"
-```
-This guarantees **zero loss of context** across multi-hour pentest phases.
-
 ---
 
 ## 🧬 Self-Evolving Strategy RAG Engine (`tools/evolution_engine.py`)
@@ -187,19 +202,6 @@ Every engagement outcome is processed, embedded, and stored in **Qdrant Vector D
 | **DVWA** (`http://dvwa:8080`) | `bug-bounty` | Command Injection, SQLi, LFI, Stored XSS | **7m 42s** | Generated (`/work/loot/dvwa_report.md`) |
 | **Metasploitable2** (`:8081`) | `recon` + `exploit` | VSFTPD 2.3.4 Backdoor, UnrealIRCd, SSH Enum | **11m 15s** | Verified PoC Exploit Generated |
 | **Protected Staging Portal** | `auth-wall` + `openclaw` | Broken Object-Level Authorization (BOLA/IDOR) | **14m 20s** | Full API Assessment Complete |
-
----
-
-## 📚 Multipage Technical Documentation Index
-
-Explore the complete sub-documentation system in [`docs/`](docs/):
-
-- 🏗️ **[Architecture & Microservice Spec](docs/ARCHITECTURE.md)** — Sidecar topology, DinD workers, OOB listeners (`28000–30000`).
-- 🧠 **[Hermes AI Reasoning Brain Spec](docs/HERMES_BRAIN.md)** — Multi-turn session persistence, 40+ agent prompts, phase completion signals.
-- 🧬 **[Self-Evolution & Vector RAG Spec](docs/SELF_EVOLUTION.md)** — Qdrant vector memory indexing, confidence score heuristics (`0.7`/`0.85`), strategy prompt injection.
-- 🛡️ **[Defensive Guardrails & Security](docs/GUARDRAILS_SECURITY.md)** — Prompt injection filters, destructive command interception, target scope auditing.
-- 🔬 **[Benchmark Case Studies](docs/CASE_STUDIES.md)** — Comprehensive execution logs for DVWA, Metasploitable2, and Auth Wall OpenClaw bypass.
-- 🤝 **[Contribution Guidelines](docs/CONTRIBUTING.md)** — How to add new specialized agents, tools, and submit pull requests.
 
 ---
 

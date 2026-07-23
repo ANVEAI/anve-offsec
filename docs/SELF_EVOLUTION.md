@@ -1,3 +1,7 @@
+[⬅️ Back to README](../README.md) | [Architecture](ARCHITECTURE.md) | [Hermes Brain](HERMES_BRAIN.md) | **Self-Evolution Spec** | [Guardrails](GUARDRAILS_SECURITY.md) | [Case Studies](CASE_STUDIES.md) | [Contributing](CONTRIBUTING.md)
+
+---
+
 # 🧬 Self-Evolution & Vector RAG Specification (`tools/evolution_engine.py`)
 
 This document details **anve-offsec**'s self-learning engine, vector memory indexing in Qdrant, strategy memory structure, and dynamic prompt injection algorithms.

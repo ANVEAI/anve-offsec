@@ -1,3 +1,7 @@
+[⬅️ Back to README](../README.md) | **Architecture Spec** | [Hermes Brain](HERMES_BRAIN.md) | [Self-Evolution](SELF_EVOLUTION.md) | [Guardrails](GUARDRAILS_SECURITY.md) | [Case Studies](CASE_STUDIES.md) | [Contributing](CONTRIBUTING.md)
+
+---
+
 # 🏗️ anve-offsec Architecture & Microservice Specification
 
 This document provides a comprehensive technical breakdown of **anve-offsec**'s multi-container infrastructure, sidecar isolation pattern, Docker socket worker execution, and out-of-band (OOB) network listening model.
