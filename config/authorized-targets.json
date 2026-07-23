@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "lab_mode": true,
+  "allow_ctf": true,
+  "allow_bug_bounty": true,
+  "targets": [
+    {
+      "domain": "127.0.0.1",
+      "type": "lab",
+      "notes": "Localhost",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "localhost",
+      "type": "lab",
+      "notes": "Localhost alias",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "dvwa",
+      "type": "lab",
+      "notes": "DVWA Docker container",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "metasploitable2",
+      "type": "lab",
+      "notes": "Metasploitable2 Docker container",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "example.com",
+      "type": "lab",
+      "notes": "IANA reserved test domain",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "*.tryhackme.com",
+      "type": "ctf",
+      "notes": "TryHackMe labs",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "*.hackthebox.com",
+      "type": "ctf",
+      "notes": "HackTheBox labs",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "*.hackthebox.eu",
+      "type": "ctf",
+      "notes": "HackTheBox EU labs",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "*.vulnhub.com",
+      "type": "ctf",
+      "notes": "VulnHub VMs",
+      "added_at": "2026-07-21T00:00:00Z"
+    },
+    {
+      "domain": "hackerone-example.com",
+      "type": "bug-bounty",
+      "notes": "Imported from HackerOne: Example Program",
+      "added_at": "2026-07-21T12:25:50.214690+00:00"
+    },
+    {
+      "domain": "*.hackerone-test.com",
+      "type": "bug-bounty",
+      "notes": "Imported from HackerOne: Test Program",
+      "added_at": "2026-07-21T12:25:50.214774+00:00"
+    }
+  ],
+  "bug_bounty_platforms": [
+    {
+      "name": "HackerOne",
+      "domain": "hackerone.com",
+      "api_url": "https://api.hackerone.com/v1/hackers/programs",
+      "notes": "Public bug bounty programs"
+    },
+    {
+      "name": "Bugcrowd",
+      "domain": "bugcrowd.com",
+      "api_url": "https://api.bugcrowd.com/programs",
+      "notes": "Public bug bounty programs"
+    },
+    {
+      "name": "Intigriti",
+      "domain": "intigriti.com",
+      "api_url": "https://api.intigriti.com/programs",
+      "notes": "Public bug bounty programs"
+    },
+    {
+      "name": "YesWeHack",
+      "domain": "yeswehack.com",
+      "api_url": "https://api.yeswehack.com/programs",
+      "notes": "Public bug bounty programs"
+    }
+  ],
+  "override": {
+    "enabled": true,
+    "require_confirmation": true,
+    "confirmation_text": "I confirm I am authorized to test {target} and accept all legal responsibility",
+    "log_overrides": true,
+    "log_file": "/work/memory/override-log.jsonl"
+  }
+}

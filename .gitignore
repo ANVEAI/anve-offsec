@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+work/
+openclaw-workspace/
+vpn/*.ovpn
+.DS_Store
+*.log
+config/openclaw/
+_quarantine/
+__pycache__/
+*.pyc

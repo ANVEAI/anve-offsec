@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kali-ai control plane</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .scroll-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    .run-card { transition: all 0.15s ease; }
+    .run-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .status-running { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    .status-queued { background: #eab308; }
+    .status-done { background: #3b82f6; }
+    .status-failed { background: #ef4444; }
+    .log-line { white-space: pre-wrap; word-break: break-all; }
+    .sse-connected { border-color: #22c55e !important; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <nav class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <i class="fa-solid fa-terminal text-green-400 text-xl"></i>
+      <h1 class="text-xl font-bold tracking-tight">kali-ai control plane</h1>
+    </div>
+    <div class="flex items-center gap-4 text-sm">
+      <span id="vpn-status" class="text-xs text-slate-500" title="VPN status">
+        <i class="fa-solid fa-shield-halved mr-1"></i>VPN: off
+      </span>
+      <span id="zap-status" class="text-xs text-slate-500" title="ZAP status">
+        <i class="fa-solid fa-bug mr-1"></i>ZAP: checking...
+      </span>
+      <a href="{{ openclaw_url }}" target="_blank" class="text-slate-400 hover:text-white transition">
+        <i class="fa-solid fa-globe mr-1"></i> OpenClaw UI
+      </a>
+      <span id="sse-status" class="text-xs text-slate-500">disconnected</span>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left: Launch + Runs -->
+    <section class="lg:col-span-1 space-y-6">
+      <!-- Launch panel -->
+      <div class="bg-slate-900 rounded-lg border border-slate-800 p-4">
+        <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-rocket text-blue-400"></i> Launch agent
+        </h2>
+        <form id="launch-form" class="space-y-3">
+          <div>
+            <label class="text-xs text-slate-400 uppercase tracking-wider">Category</label>
+            <div id="category-tabs" class="mt-1 flex flex-wrap gap-1">
+              <button type="button" data-category="all" class="category-tab text-xs px-2 py-1 rounded bg-slate-700 text-white">All</button>
+              {% for cat in agents | map(attribute='category') | unique | sort %}
+              <button type="button" data-category="{{ cat }}" class="category-tab text-xs px-2 py-1 rounded bg-slate-800 text-slate-400 hover:bg-slate-700">{{ cat }}</button>
+              {% endfor %}
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 uppercase tracking-wider">Agent</label>
+            <select id="agent-select" class="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+              {% for a in agents %}
+              <option value="{{ a.name }}" data-category="{{ a.category }}">{{ a.name }}</option>
+              {% endfor %}
+            </select>
+            <p id="agent-desc" class="mt-1 text-xs text-slate-500"></p>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 uppercase tracking-wider">Task</label>
+            <textarea id="task-input" rows="4" placeholder="Describe the authorized target and what to do..."
+              class="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 resize-y"></textarea>
+          </div>
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-play"></i> Run
+          </button>
+        </form>
+        <div class="mt-3 pt-3 border-t border-slate-800">
+          <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Workflows</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="parallel-btn" class="text-xs bg-green-600 hover:bg-green-500 text-white px-2 py-1.5 rounded transition" title="Launch same task on multiple agents">
+              <i class="fa-solid fa-bolt mr-1"></i> Parallel
+            </button>
+            <button id="chain-btn" class="text-xs bg-orange-600 hover:bg-orange-500 text-white px-2 py-1.5 rounded transition" title="Run recon → web → exploit → report chain">
+              <i class="fa-solid fa-link mr-1"></i> Chain
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active runs -->
+      <div class="bg-slate-900 rounded-lg border border-slate-800 p-4">
+        <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-green-400"></i> Runs
+        </h2>
+        <div id="runs-list" class="space-y-2 max-h-96 overflow-y-auto scroll-thin">
+          <p class="text-sm text-slate-500">No runs yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Middle: Live log -->
+    <section class="lg:col-span-2 space-y-6">
+      <div class="bg-slate-900 rounded-lg border border-slate-800 p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-scroll text-purple-400"></i> Live log
+          </h2>
+          <div class="flex items-center gap-2 text-xs">
+            <span id="run-id-display" class="text-slate-500"></span>
+            <button id="copy-log" class="text-slate-400 hover:text-white transition" title="Copy log">
+              <i class="fa-solid fa-copy"></i>
+            </button>
+            <button id="clear-log" class="text-slate-400 hover:text-white transition" title="Clear">
+              <i class="fa-solid fa-eraser"></i>
+            </button>
+          </div>
+        </div>
+        <div id="log-viewer" class="bg-slate-950 rounded border border-slate-800 p-3 h-96 overflow-y-auto scroll-thin mono text-xs leading-relaxed">
+          <span class="text-slate-600">Select a run to view its log, or launch a new agent.</span>
+        </div>
+      </div>
+
+      <!-- Loot & reports tabs -->
+      <div class="bg-slate-900 rounded-lg border border-slate-800 p-4">
+        <div class="flex items-center gap-4 mb-3 border-b border-slate-800 pb-2">
+          <button data-tab="loot" class="tab-btn text-sm font-medium text-slate-400 hover:text-white transition pb-1 border-b-2 border-transparent">
+            <i class="fa-solid fa-folder-open mr-1"></i> Loot
+          </button>
+          <button data-tab="reports" class="tab-btn text-sm font-medium text-slate-400 hover:text-white transition pb-1 border-b-2 border-transparent">
+            <i class="fa-solid fa-file-lines mr-1"></i> Reports
+          </button>
+          <button data-tab="memory" class="tab-btn text-sm font-medium text-slate-400 hover:text-white transition pb-1 border-b-2 border-transparent">
+            <i class="fa-solid fa-brain mr-1"></i> Memory
+          </button>
+          <button data-tab="evolution" class="tab-btn text-sm font-medium text-slate-400 hover:text-white transition pb-1 border-b-2 border-transparent">
+            <i class="fa-solid fa-dna mr-1"></i> Evolution
+          </button>
+          <button id="curate-btn" class="ml-auto text-xs bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded transition" title="Run curator agent">
+            <i class="fa-solid fa-broom mr-1"></i> Curate
+          </button>
+        </div>
+        <div id="loot-panel" class="tab-panel">
+          <div id="loot-breadcrumb" class="text-xs text-slate-500 mb-2">/</div>
+          <div id="loot-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto scroll-thin">
+            <p class="text-sm text-slate-500">No evidence yet.</p>
+          </div>
+        </div>
+        <div id="reports-panel" class="tab-panel hidden">
+          <div id="reports-list" class="space-y-2 max-h-64 overflow-y-auto scroll-thin">
+            <p class="text-sm text-slate-500">No reports yet.</p>
+          </div>
+        </div>
+        <div id="memory-panel" class="tab-panel hidden">
+          <div class="mb-3">
+            <input id="rag-search-input" type="text" placeholder="Search memory (e.g. 'TCP scan', 'bug bounty', 'example.com')..."
+              class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 mb-2">
+            <div class="flex gap-2">
+              <button id="rag-search-btn" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded transition">
+                <i class="fa-solid fa-search mr-1"></i> Search lessons
+              </button>
+              <button id="rag-ingest-btn" class="text-xs bg-green-600 hover:bg-green-500 text-white px-3 py-1.5 rounded transition">
+                <i class="fa-solid fa-download mr-1"></i> Re-ingest
+              </button>
+            </div>
+          </div>
+          <div id="rag-results" class="mb-3 hidden">
+            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Search results</p>
+            <div id="rag-results-list" class="space-y-2 max-h-48 overflow-y-auto scroll-thin"></div>
+          </div>
+          <div id="memory-stats" class="mb-3 text-xs text-slate-400"></div>
+          <div id="memory-lessons" class="space-y-2 max-h-64 overflow-y-auto scroll-thin">
+            <p class="text-sm text-slate-500">No lessons yet.</p>
+          </div>
+        </div>
+        <div id="evolution-panel" class="tab-panel hidden">
+          <div class="mb-3 flex items-center justify-between">
+            <p class="text-xs text-slate-400 uppercase tracking-wider">Self-evolution strategy</p>
+            <button id="deep-review-btn" class="text-xs bg-orange-600 hover:bg-orange-500 text-white px-3 py-1.5 rounded transition">
+              <i class="fa-solid fa-rotate mr-1"></i> Deep Review
+            </button>
+          </div>
+          <div id="evolution-stats" class="mb-3 text-xs text-slate-400"></div>
+          <div id="evolution-scenarios" class="space-y-2 max-h-64 overflow-y-auto scroll-thin">
+            <p class="text-sm text-slate-500">No strategy data yet.</p>
+          </div>
+          <div class="mt-4">
+            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">Evolution log</p>
+            <div id="evolution-log" class="space-y-1 max-h-32 overflow-y-auto scroll-thin mono text-[10px] text-slate-500"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const agents = {{ agents | tojson }};
+    let currentRunId = null;
+    let eventSource = null;
+    let lootPath = "";
+
+    // --- Tabs ---
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+        document.getElementById(tab + "-panel").classList.remove("hidden");
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("border-blue-500", "text-white"));
+        btn.classList.add("border-blue-500", "text-white");
+      });
+    });
+
+    // --- Category filter ---
+    document.querySelectorAll(".category-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cat = btn.dataset.category;
+        document.querySelectorAll(".category-tab").forEach(b => {
+          b.classList.remove("bg-slate-700", "text-white");
+          b.classList.add("bg-slate-800", "text-slate-400");
+        });
+        btn.classList.remove("bg-slate-800", "text-slate-400");
+        btn.classList.add("bg-slate-700", "text-white");
+        Array.from(agentSelect.options).forEach(opt => {
+          opt.hidden = cat !== "all" && opt.dataset.category !== cat;
+        });
+        // select first visible option
+        const visible = Array.from(agentSelect.options).find(o => !o.hidden);
+        if (visible) agentSelect.value = visible.value;
+        updateAgentDesc();
+      });
+    });
+
+    // --- Agent select ---
+    const agentSelect = document.getElementById("agent-select");
+    const agentDesc = document.getElementById("agent-desc");
+    function updateAgentDesc() {
+      const a = agents.find(x => x.name === agentSelect.value);
+      agentDesc.textContent = a ? a.description : "";
+    }
+    agentSelect.addEventListener("change", updateAgentDesc);
+    updateAgentDesc();
+
+    // --- Launch ---
+    document.getElementById("launch-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const agent = agentSelect.value;
+      const task = document.getElementById("task-input").value.trim();
+      if (!task) return alert("Task is required.");
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Starting...';
+      try {
+        const res = await fetch(`/api/agents/${agent}/run`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        currentRunId = data.run_id;
+        document.getElementById("run-id-display").textContent = data.run_id;
+        clearLog();
+        connectSSE(data.run_id);
+        refreshRuns();
+        document.getElementById("task-input").value = "";
+      } catch (err) {
+        alert("Launch failed: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Run';
+      }
+    });
+
+    // --- SSE ---
+    function connectSSE(runId) {
+      if (eventSource) eventSource.close();
+      const statusEl = document.getElementById("sse-status");
+      statusEl.textContent = "connecting...";
+      statusEl.className = "text-xs text-yellow-500";
+      eventSource = new EventSource(`/api/runs/${runId}/stream`);
+      eventSource.onopen = () => {
+        statusEl.textContent = "live";
+        statusEl.className = "text-xs text-green-500";
+        document.getElementById("log-viewer").classList.add("sse-connected");
+      };
+      eventSource.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        if (data.line) appendLog(data.line);
+        if (data.status) {
+          appendLog(`\n==> Final status: ${data.status} (exit ${data.exit_code ?? "?"})`);
+          refreshRuns();
+          setTimeout(() => { if (eventSource) eventSource.close(); }, 1500);
+        }
+      };
+      eventSource.onerror = () => {
+        statusEl.textContent = "disconnected";
+        statusEl.className = "text-xs text-slate-500";
+        document.getElementById("log-viewer").classList.remove("sse-connected");
+      };
+    }
+
+    // --- Log ---
+    const logViewer = document.getElementById("log-viewer");
+    function appendLog(line) {
+      const div = document.createElement("div");
+      div.className = "log-line";
+      div.textContent = line;
+      logViewer.appendChild(div);
+      logViewer.scrollTop = logViewer.scrollHeight;
+    }
+    function clearLog() {
+      logViewer.innerHTML = '<span class="text-slate-600">Waiting for output...</span>';
+    }
+    document.getElementById("clear-log").addEventListener("click", clearLog);
+    document.getElementById("copy-log").addEventListener("click", () => {
+      navigator.clipboard.writeText(logViewer.innerText);
+    });
+
+    // --- Runs list ---
+    async function refreshRuns() {
+      const res = await fetch("/api/runs");
+      const data = await res.json();
+      const list = document.getElementById("runs-list");
+      if (!data.runs.length) {
+        list.innerHTML = '<p class="text-sm text-slate-500">No runs yet.</p>';
+        return;
+      }
+      list.innerHTML = data.runs.map(r => `
+        <div class="run-card bg-slate-800 border border-slate-700 rounded p-3 cursor-pointer hover:border-slate-600" data-run-id="${r.run_id}">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm font-medium">${r.agent}</span>
+            <span class="text-xs flex items-center gap-1">
+              ${addReflectButton(r.run_id, r.status)}
+              <span class="status-dot status-${r.status}"></span>${r.status}
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 truncate">${r.task}</p>
+          <p class="text-[10px] text-slate-600 mt-1">${r.model || 'k3'} · ${r.run_id}</p>
+        </div>
+      `).join("");
+      list.querySelectorAll(".run-card").forEach(card => {
+        card.addEventListener("click", (e) => {
+          if (e.target.closest(".reflect-btn")) return;
+          currentRunId = card.dataset.runId;
+          document.getElementById("run-id-display").textContent = currentRunId;
+          loadRunLog(currentRunId);
+          connectSSE(currentRunId);
+        });
+      });
+      list.querySelectorAll(".reflect-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const runId = btn.dataset.runId;
+          if (!confirm(`Run reflect agent on run ${runId}?`)) return;
+          try {
+            const res = await fetch(`/api/runs/${runId}/reflect`, { method: "POST" });
+            const data = await res.json();
+            alert(`Reflect agent launched: ${data.run_id}`);
+            refreshRuns();
+          } catch (err) {
+            alert("Reflect failed: " + err.message);
+          }
+        });
+      });
+    }
+
+    async function loadRunLog(runId) {
+      const res = await fetch(`/api/runs/${runId}`);
+      const data = await res.json();
+      logViewer.innerHTML = "";
+      const lines = (data.tail || "").split("\n");
+      if (lines.length === 1 && !lines[0]) {
+        clearLog();
+      } else {
+        lines.forEach(appendLog);
+      }
+    }
+
+    // --- Loot ---
+    async function loadLoot(path = "") {
+      const res = await fetch(`/api/loot?path=${encodeURIComponent(path)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      lootPath = data.path;
+      document.getElementById("loot-breadcrumb").textContent = "/" + data.path;
+      const list = document.getElementById("loot-list");
+      if (!data.items.length) {
+        list.innerHTML = '<p class="text-sm text-slate-500">Empty.</p>';
+        return;
+      }
+      list.innerHTML = data.items.map(item => {
+        if (item.is_dir) {
+          return `
+            <div class="bg-slate-800 border border-slate-700 rounded p-2 cursor-pointer hover:border-slate-600 loot-dir" data-path="${item.path}">
+              <i class="fa-solid fa-folder text-yellow-500 mr-2"></i>
+              <span class="text-sm">${item.name}</span>
+            </div>
+          `;
+        }
+        return `
+          <div class="bg-slate-800 border border-slate-700 rounded p-2 cursor-pointer hover:border-slate-600 loot-file" data-path="${item.path}">
+            <i class="fa-solid fa-file text-blue-400 mr-2"></i>
+            <span class="text-sm">${item.name}</span>
+            <span class="text-[10px] text-slate-500 block">${(item.size / 1024).toFixed(1)} KB</span>
+          </div>
+        `;
+      }).join("");
+      list.querySelectorAll(".loot-dir").forEach(el => el.addEventListener("click", () => loadLoot(el.dataset.path)));
+      list.querySelectorAll(".loot-file").forEach(el => el.addEventListener("click", async () => {
+        const res = await fetch(`/api/loot/file?path=${encodeURIComponent(el.dataset.path)}`);
+        const text = await res.text();
+        alert(text.slice(0, 8000));
+      }));
+    }
+
+    // --- Reports ---
+    async function loadReports() {
+      const res = await fetch("/api/reports");
+      const data = await res.json();
+      const list = document.getElementById("reports-list");
+      if (!data.reports.length) {
+        list.innerHTML = '<p class="text-sm text-slate-500">No reports yet.</p>';
+        return;
+      }
+      list.innerHTML = data.reports.map(r => `
+        <div class="bg-slate-800 border border-slate-700 rounded p-3 cursor-pointer hover:border-slate-600 report-item" data-name="${r.name}">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium"><i class="fa-solid fa-file-lines text-blue-400 mr-2"></i>${r.name}</span>
+            <span class="text-xs text-slate-500">${(r.size / 1024).toFixed(1)} KB</span>
+          </div>
+          <p class="text-[10px] text-slate-600 mt-1">${r.modified}</p>
+        </div>
+      `).join("");
+      list.querySelectorAll(".report-item").forEach(el => el.addEventListener("click", async () => {
+        const res = await fetch(`/api/reports/${el.dataset.name}`);
+        const text = await res.text();
+        alert(text.slice(0, 12000));
+      }));
+    }
+
+    // --- Memory ---
+    async function loadMemory() {
+      const statsRes = await fetch("/api/memory/stats");
+      const stats = await statsRes.json();
+      document.getElementById("memory-stats").textContent =
+        `${stats.total_lessons} lessons · ${stats.agents_with_lessons} agents · ${stats.success_rate}% success rate`;
+
+      const lessonsRes = await fetch("/api/memory/lessons?limit=20");
+      const data = await lessonsRes.json();
+      const list = document.getElementById("memory-lessons");
+      if (!data.lessons.length) {
+        list.innerHTML = '<p class="text-sm text-slate-500">No lessons yet.</p>';
+        return;
+      }
+      list.innerHTML = data.lessons.map(l => `
+        <div class="bg-slate-800 border border-slate-700 rounded p-2">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-medium">${l.agent}</span>
+            <span class="text-[10px] text-slate-500">${l.status}</span>
+          </div>
+          <p class="text-xs text-slate-400">${l.task.slice(0, 80)}${l.task.length > 80 ? '...' : ''}</p>
+          <p class="text-[10px] text-slate-600 mt-1">${l.outcome ? l.outcome.slice(0, 100) : ''}</p>
+        </div>
+      `).join("");
+    }
+
+    // --- Curate ---
+    document.getElementById("curate-btn").addEventListener("click", async () => {
+      if (!confirm("Run curator agent to review and improve memory?")) return;
+      try {
+        const res = await fetch("/api/curate", { method: "POST" });
+        const data = await res.json();
+        alert(`Curator launched: ${data.run_id}`);
+        refreshRuns();
+      } catch (err) {
+        alert("Curate failed: " + err.message);
+      }
+    });
+
+    // --- RAG search ---
+    document.getElementById("rag-search-btn").addEventListener("click", async () => {
+      const q = document.getElementById("rag-search-input").value.trim();
+      if (!q) return;
+      try {
+        const res = await fetch(`/api/rag/search?q=${encodeURIComponent(q)}&limit=5`);
+        const data = await res.json();
+        const results = document.getElementById("rag-results");
+        const list = document.getElementById("rag-results-list");
+        results.classList.remove("hidden");
+        if (!data.lessons || !data.lessons.length) {
+          list.innerHTML = '<p class="text-sm text-slate-500">No matching lessons.</p>';
+          return;
+        }
+        list.innerHTML = data.lessons.map(l => `
+          <div class="bg-slate-800 border border-slate-700 rounded p-2">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-medium">${l.agent}</span>
+              <span class="text-[10px] text-slate-500">${l.status}</span>
+            </div>
+            <p class="text-xs text-slate-400">${l.task.slice(0, 80)}${l.task.length > 80 ? '...' : ''}</p>
+            <p class="text-[10px] text-slate-600 mt-1">${l.outcome ? l.outcome.slice(0, 120) : ''}</p>
+          </div>
+        `).join("");
+      } catch (err) {
+        alert("Search failed: " + err.message);
+      }
+    });
+
+    document.getElementById("rag-ingest-btn").addEventListener("click", async () => {
+      if (!confirm("Re-ingest lessons and corpus into RAG?")) return;
+      try {
+        const res = await fetch("/api/rag/ingest", { method: "POST" });
+        const data = await res.json();
+        alert(`Ingested: ${JSON.stringify(data.lessons || {})}`);
+        loadMemory();
+      } catch (err) {
+        alert("Ingest failed: " + err.message);
+      }
+    });
+
+    // --- Reflect on failed run ---
+    function addReflectButton(runId, status) {
+      if (status !== "failed") return "";
+      return `<button class="reflect-btn text-xs bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded transition" data-run-id="${runId}" title="Run reflect agent">
+        <i class="fa-solid fa-lightbulb"></i> Reflect
+      </button>`;
+    }
+
+    // --- Workflow buttons ---
+    document.getElementById("parallel-btn").addEventListener("click", async () => {
+      const task = document.getElementById("task-input").value.trim();
+      if (!task) return alert("Enter a task first.");
+      const selected = prompt("Enter agent names separated by commas (e.g. mitre/recon,owasp/injection):", "mitre/recon,owasp/misconfig");
+      if (!selected) return;
+      const agents = selected.split(",").map(a => ({ agent: a.trim(), task }));
+      try {
+        const res = await fetch("/api/workflow/parallel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agents }),
+        });
+        const data = await res.json();
+        alert(`Parallel workflow launched: ${data.workflow_id}`);
+        refreshRuns();
+      } catch (err) {
+        alert("Parallel workflow failed: " + err.message);
+      }
+    });
+
+    document.getElementById("chain-btn").addEventListener("click", async () => {
+      const target = prompt("Enter target (IP or domain):", "127.0.0.1");
+      if (!target) return;
+      const steps = [
+        { agent: "mitre/recon", task: "Full recon of {{target}} and save evidence." },
+        { agent: "web", task: "Assess web services on {{target}} using evidence from {{previous_evidence}}." },
+        { agent: "exploit", task: "Attempt controlled exploitation on {{target}} using evidence from {{previous_evidence}}." },
+        { agent: "report", task: "Generate a full report from all evidence in {{previous_evidence}}." },
+      ];
+      try {
+        const res = await fetch("/api/workflow/chain", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ steps, target }),
+        });
+        const data = await res.json();
+        alert(`Chain workflow launched: ${data.workflow_id}`);
+        refreshRuns();
+      } catch (err) {
+        alert("Chain workflow failed: " + err.message);
+      }
+    });
+
+    // --- Status indicators ---
+    async function checkStatus() {
+      try {
+        const zapRes = await fetch("http://127.0.0.1:8090/JSON/core/view/version/", { mode: "no-cors" }).catch(() => null);
+        const zapEl = document.getElementById("zap-status");
+        if (zapRes && zapRes.type === "opaque") {
+          zapEl.innerHTML = '<i class="fa-solid fa-bug mr-1 text-green-500"></i>ZAP: on';
+        } else {
+          zapEl.innerHTML = '<i class="fa-solid fa-bug mr-1 text-red-500"></i>ZAP: off';
+        }
+      } catch {
+        document.getElementById("zap-status").innerHTML = '<i class="fa-solid fa-bug mr-1 text-red-500"></i>ZAP: off';
+      }
+
+      try {
+        const vpnRes = await fetch("/api/vpn/status");
+        const vpnData = await vpnRes.json();
+        const vpnEl = document.getElementById("vpn-status");
+        if (vpnData.status === "connected") {
+          vpnEl.innerHTML = '<i class="fa-solid fa-shield-halved mr-1 text-green-500"></i>VPN: on';
+        } else {
+          vpnEl.innerHTML = '<i class="fa-solid fa-shield-halved mr-1 text-slate-500"></i>VPN: off';
+        }
+      } catch {
+        document.getElementById("vpn-status").innerHTML = '<i class="fa-solid fa-shield-halved mr-1 text-slate-500"></i>VPN: off';
+      }
+    }
+
+    // --- Evolution ---
+    async function loadEvolution() {
+      try {
+        const res = await fetch("/api/evolution/strategy");
+        const data = await res.json();
+        const scenarios = Object.entries(data.scenarios || {});
+        const stats = document.getElementById("evolution-stats");
+        stats.textContent = `${scenarios.length} scenarios · ${Object.keys(data.target_profiles || {}).length} targets · ${scenarios.filter(([_, s]) => s.confidence >= 0.7).length} high-confidence`;
+
+        const list = document.getElementById("evolution-scenarios");
+        if (!scenarios.length) {
+          list.innerHTML = '<p class="text-sm text-slate-500">No strategy data yet.</p>';
+        } else {
+          list.innerHTML = scenarios.sort((a, b) => (b[1].confidence || 0) - (a[1].confidence || 0)).map(([name, s]) => `
+            <div class="bg-slate-800 border border-slate-700 rounded p-2">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-medium">${name}</span>
+                <span class="text-[10px] text-slate-500">${(s.success_rate || 0) * 100}% · conf ${(s.confidence || 0).toFixed(2)}</span>
+              </div>
+              <p class="text-[10px] text-slate-500">${s.run_count || 0} runs · tools: ${Object.keys(s.tool_effectiveness || {}).slice(0, 5).join(", ") || "none"}</p>
+            </div>
+          `).join("");
+        }
+
+        const logRes = await fetch("/api/evolution/log?limit=20");
+        const logData = await logRes.json();
+        const logList = document.getElementById("evolution-log");
+        logList.innerHTML = (logData.log || []).map(l => `<div>${l}</div>`).join("") || '<p class="text-slate-600">No evolution log yet.</p>';
+      } catch (err) {
+        console.error("Evolution load failed:", err);
+      }
+    }
+
+    document.getElementById("deep-review-btn").addEventListener("click", async () => {
+      if (!confirm("Run deep review evolution cycle?")) return;
+      try {
+        const res = await fetch("/api/evolution/deep-review", { method: "POST" });
+        const data = await res.json();
+        alert(`Deep review complete: ${JSON.stringify(data)}`);
+        loadEvolution();
+      } catch (err) {
+        alert("Deep review failed: " + err.message);
+      }
+    });
+
+    // --- Init ---
+    refreshRuns();
+    loadLoot();
+    loadReports();
+    loadMemory();
+    loadEvolution();
+    checkStatus();
+    setInterval(refreshRuns, 3000);
+    setInterval(loadLoot, 10000);
+    setInterval(loadReports, 15000);
+    setInterval(loadMemory, 20000);
+    setInterval(loadEvolution, 30000);
+    setInterval(checkStatus, 10000);
+  </script>
+</body>
+</html>

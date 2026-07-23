@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kali-ai — Bug Bounty Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --dim: #64748b;
+      --accent: #8b5cf6;
+      --accent-hover: #7c3aed;
+      --success: #22c55e;
+      --warning: #eab308;
+      --danger: #ef4444;
+      --info: #3b82f6;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
+    .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .logo { font-size: 20px; font-weight: 700; }
+    .status { display: flex; gap: 12px; font-size: 12px; color: var(--muted); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .status-on { background: var(--success); }
+    .status-off { background: var(--dim); }
+    .input-section { margin-bottom: 32px; }
+    .input-box { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; color: var(--text); font-size: 15px; margin-bottom: 12px; resize: vertical; min-height: 80px; }
+    .input-box::placeholder { color: var(--dim); }
+    .input-box:focus { outline: none; border-color: var(--accent); }
+    .input-row { display: flex; gap: 12px; align-items: center; }
+    .agent-select { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px; min-width: 160px; }
+    .btn { background: var(--accent); color: white; border: none; border-radius: 6px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--accent); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .quick-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .quick-btn { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .quick-btn:hover { border-color: var(--accent); color: var(--text); }
+    .section-title { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .methodology { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 8px; }
+    .method-step { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; white-space: nowrap; }
+    .method-step.completed { border-color: var(--success); }
+    .method-step.active { border-color: var(--info); background: rgba(59, 130, 246, 0.1); }
+    .method-step.pending { opacity: 0.5; }
+    .step-number { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+    .step-number.completed { background: var(--success); }
+    .step-number.active { background: var(--info); }
+    .tools { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tool { padding: 4px 8px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; font-size: 11px; }
+    .tool.success { border-left: 3px solid var(--success); }
+    .tool.failed { border-left: 3px solid var(--danger); }
+    .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .tab { padding: 8px 12px; background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; }
+    .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .log-viewer { background: #0a0f1a; border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); max-height: 300px; overflow-y: auto; margin-bottom: 16px; }
+    .log-line { padding: 2px 0; }
+    .log-line.highlight { color: var(--text); background: rgba(139, 92, 246, 0.1); }
+    .evidence-list { display: flex; flex-direction: column; gap: 6px; }
+    .evidence-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .evidence-item:hover { border-color: var(--accent); }
+    .evidence-size { margin-left: auto; color: var(--dim); font-size: 11px; }
+    .strategy-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px; font-size: 12px; }
+    .strategy-name { font-weight: 600; }
+    .strategy-stats { color: var(--muted); font-size: 11px; }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+    .next-step-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; cursor: pointer; }
+    .next-step-card:hover { border-color: var(--accent); }
+    .next-step-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .next-step-desc { font-size: 12px; color: var(--muted); }
+    .run-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s; }
+    .run-card:hover { border-color: var(--accent); }
+    .run-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .run-agent { font-size: 14px; font-weight: 600; }
+    .run-task { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    .run-meta { font-size: 11px; color: var(--dim); }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+    .tag-success { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+    .tag-warning { background: rgba(234, 179, 8, 0.2); color: var(--warning); }
+    .tag-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    .tag-info { background: rgba(59, 130, 246, 0.2); color: var(--info); }
+    .tag-purple { background: rgba(139, 92, 246, 0.2); color: var(--accent); }
+    .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--dim); }
+    .empty-state i { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-content { background: var(--card); border: 1px solid var(--border); border-radius: 8px; max-width: 700px; max-height: 80vh; overflow-y: auto; padding: 24px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; }
+    .file-content { background: #0a0f1a; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: ui-monospace, monospace; font-size: 11px; white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto; }
+    @media (max-width: 768px) {
+      .input-row { flex-direction: column; }
+      .agent-select { width: 100%; }
+      .methodology { flex-wrap: wrap; }
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo"><i class="fa-solid fa-bullseye text-purple-400"></i> kali-ai</div>
+      <div class="status">
+        <span id="status-zap"><span class="status-dot status-off"></span>ZAP</span>
+        <span id="status-qdrant"><span class="status-dot status-off"></span>Qdrant</span>
+        <span id="status-dvwa"><span class="status-dot status-off"></span>DVWA</span>
+        <span id="status-vpn"><span class="status-dot status-off"></span>VPN</span>
+        <span id="status-sse"><span class="status-dot status-off"></span>Live</span>
+      </div>
+    </div>
+
+    <!-- Input Section -->
+    <div class="input-section">
+      <textarea id="task-input" class="input-box" placeholder="Describe your authorized target and what to do...&#10;e.g. Run a full bug bounty on http://dvwa with admin/password"></textarea>
+      <div class="input-row">
+        <select id="agent-select" class="agent-select">
+          <option value="">Select agent...</option>
+        </select>
+        <button id="launch-btn" class="btn"><i class="fa-solid fa-play"></i> Launch</button>
+        <button id="parallel-btn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-bolt"></i> Parallel</button>
+        <button id="chain-btn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-link"></i> Chain</button>
+      </div>
+      <div id="auth-warning" style="display: none; margin-top: 8px; padding: 8px; background: rgba(239,68,68,0.1); border: 1px solid var(--danger); border-radius: 6px; font-size: 12px;">
+        <i class="fa-solid fa-triangle-exclamation text-red-400"></i> <span id="auth-warning-text"></span>
+        <div style="margin-top: 8px;">
+          <input id="override-confirm" type="text" placeholder="Type confirmation to override..." style="width: 100%; padding: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 12px; margin-bottom: 6px;">
+          <button id="override-btn" class="btn btn-sm" style="background: var(--danger);">Override & Launch</button>
+          <button id="override-cancel" class="btn btn-secondary btn-sm">Cancel</button>
+        </div>
+      </div>
+      <div class="quick-actions">
+        <button class="quick-btn" data-action="recon">Recon Only</button>
+        <button class="quick-btn" data-action="web">Web Assessment</button>
+        <button class="quick-btn" data-action="bug-bounty">Full Bug Bounty</button>
+        <button class="quick-btn" data-action="parallel">Parallel Scan</button>
+      </div>
+    </div>
+
+    <!-- Authorized Targets Tab -->
+    <div id="tab-auth" class="tab-panel">
+      <div class="section-title">Authorized Targets</div>
+      <div style="margin-bottom: 16px;">
+        <div class="quick-actions" style="margin-bottom: 12px;">
+          <button class="quick-btn" onclick="addPreset('127.0.0.1', 'lab', 'Localhost')">+ Localhost</button>
+          <button class="quick-btn" onclick="addPreset('dvwa', 'lab', 'DVWA')">+ DVWA</button>
+          <button class="quick-btn" onclick="addPreset('metasploitable2', 'lab', 'Metasploitable2')">+ Metasploitable2</button>
+          <button class="quick-btn" onclick="addPreset('*.tryhackme.com', 'ctf', 'TryHackMe')">+ THM</button>
+          <button class="quick-btn" onclick="addPreset('*.hackthebox.com', 'ctf', 'HackTheBox')">+ HTB</button>
+        </div>
+        <div class="input-row" style="margin-bottom: 8px;">
+          <input id="new-target-domain" type="text" placeholder="domain.com or *.domain.com" style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+          <select id="new-target-type" class="agent-select" style="min-width: 120px;">
+            <option value="self">Self</option>
+            <option value="client">Client</option>
+            <option value="bug-bounty">Bug Bounty</option>
+            <option value="ctf">CTF</option>
+            <option value="lab">Lab</option>
+          </select>
+          <button id="add-target-btn" class="btn btn-sm">Add</button>
+        </div>
+        <input id="new-target-notes" type="text" placeholder="Notes (optional)" style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 12px;">
+        <div style="margin-top: 8px;">
+          <button id="bulk-add-btn" class="btn btn-secondary btn-sm" style="font-size: 11px;">Bulk Add (one per line)</button>
+        </div>
+        <div id="bulk-add-section" style="display: none; margin-top: 8px;">
+          <textarea id="bulk-add-text" placeholder="domain1.com&#10;*.domain2.com&#10;domain3.com" style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; color: var(--text); font-size: 12px; min-height: 80px; margin-bottom: 6px;"></textarea>
+          <div class="input-row">
+            <select id="bulk-add-type" class="agent-select" style="min-width: 120px;">
+              <option value="self">Self</option>
+              <option value="client">Client</option>
+              <option value="bug-bounty">Bug Bounty</option>
+              <option value="ctf">CTF</option>
+              <option value="lab">Lab</option>
+            </select>
+            <button id="bulk-add-submit" class="btn btn-sm">Add All</button>
+          </div>
+        </div>
+      </div>
+      <div id="auth-targets-list">
+        <div class="empty-state">
+          <i class="fa-solid fa-shield-halved"></i>
+          <p>No authorized targets yet</p>
+        </div>
+      </div>
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <div class="section-title">Import Bug Bounty Scope</div>
+        <div class="input-row">
+          <select id="import-platform" class="agent-select" style="min-width: 140px;">
+            <option value="HackerOne">HackerOne</option>
+            <option value="Bugcrowd">Bugcrowd</option>
+            <option value="Intigriti">Intigriti</option>
+            <option value="YesWeHack">YesWeHack</option>
+          </select>
+          <input id="import-scope" type="text" placeholder='[{"domain":"example.com","name":"Example Program"}]' style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 12px;">
+          <button id="import-btn" class="btn btn-sm">Import</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Methodology -->
+    <div id="methodology-section" style="display: none;">
+      <div class="section-title">Methodology</div>
+      <div id="methodology" class="methodology">
+        <!-- Filled by JS based on agent type -->
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <div id="tools-section" style="display: none;">
+      <div class="section-title">Tools Used</div>
+      <div id="tools" class="tools">
+        <!-- Filled by JS from run log -->
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="log">Live Log</button>
+      <button class="tab" data-tab="evidence">Evidence</button>
+      <button class="tab" data-tab="strategy">Strategy</button>
+      <button class="tab" data-tab="next">Next Steps</button>
+      <button class="tab" data-tab="auth">Targets</button>
+      <button class="tab" data-tab="auth-wall">Auth Wall</button>
+      <button class="tab" data-tab="scenarios">Scenarios</button>
+      <button class="tab" data-tab="vpn">VPN</button>
+      <button class="tab" data-tab="engines">Engines</button>
+    </div>
+
+    <!-- Live Log Tab -->
+    <div id="tab-log" class="tab-panel active">
+      <div id="phases-panel" style="display: none; margin-bottom: 12px; padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 8px;">
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Engagement phases</div>
+        <div id="phases-list" style="font-size: 12px;"></div>
+      </div>
+      <div id="log-viewer" class="log-viewer">
+        <div class="empty-state">
+          <i class="fa-solid fa-terminal"></i>
+          <p>Launch an agent to see live output</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evidence Tab -->
+    <div id="tab-evidence" class="tab-panel">
+      <div class="section-title">Evidence Captured</div>
+      <div id="evidence-list" class="evidence-list">
+        <div class="empty-state">
+          <i class="fa-solid fa-folder-open"></i>
+          <p>No evidence yet</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strategy Tab -->
+    <div id="tab-strategy" class="tab-panel">
+      <div class="section-title">Strategy Memory</div>
+      <div id="strategy-list">
+        <div class="empty-state">
+          <i class="fa-solid fa-brain"></i>
+          <p>No strategy data yet</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next Steps Tab -->
+    <div id="tab-next" class="tab-panel">
+      <div class="section-title">Suggested Next Steps</div>
+      <div id="next-steps-list">
+        <div class="empty-state">
+          <i class="fa-solid fa-forward-step"></i>
+          <p>No suggestions yet</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auth Wall Tab -->
+    <div id="tab-auth-wall" class="tab-panel">
+      <div class="section-title">Authentication Wall Testing</div>
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header">
+          <span class="card-title">Test Configuration</span>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <input id="auth-target" type="text" placeholder="Target URL (e.g., http://dvwa/login.php)" style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px; margin-bottom: 8px;">
+          <div class="input-row" style="margin-bottom: 8px;">
+            <input id="auth-username" type="text" placeholder="Username" style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+            <input id="auth-password" type="password" placeholder="Password" style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+          </div>
+          <div class="quick-actions">
+            <button class="quick-btn" onclick="launchAuthWall('login')">Login Test</button>
+            <button class="quick-btn" onclick="launchAuthWall('session')">Session Test</button>
+            <button class="quick-btn" onclick="launchAuthWall('post-auth')">Post-Auth Test</button>
+            <button class="quick-btn" onclick="launchAuthWall('full')">Full Auth Wall</button>
+          </div>
+        </div>
+      </div>
+      <div id="auth-wall-results">
+        <div class="empty-state">
+          <i class="fa-solid fa-lock"></i>
+          <p>Configure target and credentials, then launch an auth wall test</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenarios Tab -->
+    <div id="tab-scenarios" class="tab-panel">
+      <div class="section-title">User Scenario Tests</div>
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header">
+          <span class="card-title">Scenario Builder</span>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <input id="scenario-name" type="text" placeholder="Scenario name (e.g., Login Flow)" style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px; margin-bottom: 8px;">
+          <input id="scenario-target" type="text" placeholder="Target URL (e.g., http://dvwa)" style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px; margin-bottom: 8px;">
+          <textarea id="scenario-steps" placeholder='[{"action":"navigate","url":"http://dvwa/login.php"},{"action":"fill","selector":"input[name=username]","value":"admin"},{"action":"fill","selector":"input[name=password]","value":"password"},{"action":"click","selector":"input[name=Login]"},{"action":"wait","condition":"url_contains","value":"index.php"},{"action":"screenshot","name":"login_success"}]' style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: var(--text); font-size: 12px; min-height: 120px; font-family: ui-monospace, monospace; margin-bottom: 8px;"></textarea>
+          <div class="quick-actions">
+            <button class="quick-btn" onclick="loadScenarioTemplate('login')">Login Template</button>
+            <button class="quick-btn" onclick="loadScenarioTemplate('register')">Register Template</button>
+            <button class="quick-btn" onclick="loadScenarioTemplate('checkout')">Checkout Template</button>
+            <button class="quick-btn" onclick="launchScenario()">Run Scenario</button>
+          </div>
+        </div>
+      </div>
+      <div id="scenario-results">
+        <div class="empty-state">
+          <i class="fa-solid fa-route"></i>
+          <p>Build a scenario and run it to see results</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- VPN Tab -->
+    <div id="tab-vpn" class="tab-panel">
+      <div class="section-title">VPN Management</div>
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header">
+          <span class="card-title">VPN Profiles</span>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <div class="input-row" style="margin-bottom: 8px;">
+            <input id="vpn-profile-name" type="text" placeholder="Profile name (e.g., thm-lab)" style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+            <button id="vpn-upload-btn" class="btn btn-sm">Upload .ovpn</button>
+          </div>
+          <input id="vpn-profile-file" type="file" accept=".ovpn" style="display: none;">
+          <textarea id="vpn-profile-content" placeholder="Paste .ovpn content here..." style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: var(--text); font-size: 12px; min-height: 120px; font-family: ui-monospace, monospace; margin-bottom: 8px;"></textarea>
+          <div class="quick-actions">
+            <button class="quick-btn" onclick="vpnConnect()">Connect</button>
+            <button class="quick-btn" onclick="vpnDisconnect()">Disconnect</button>
+            <button class="quick-btn" onclick="vpnStatus()">Status</button>
+            <button class="quick-btn" onclick="vpnSaveProfile()">Save Profile</button>
+          </div>
+        </div>
+      </div>
+      <div id="vpn-status-display">
+        <div class="empty-state">
+          <i class="fa-solid fa-shield-halved"></i>
+          <p>Upload a .ovpn profile or paste content to connect</p>
+        </div>
+      </div>
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <div class="section-title">Active Connections</div>
+        <div id="vpn-connections-list">
+          <div class="empty-state">
+            <i class="fa-solid fa-network-wired"></i>
+            <p>No active VPN connections</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Engines Tab -->
+    <div id="tab-engines" class="tab-panel">
+      <div class="section-title">Professional Engines</div>
+
+      <!-- Attack Plan -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header"><i class="fa-solid fa-chess"></i> Attack Plan</div>
+        <div style="padding: 12px;">
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <input id="plan-target" type="text" placeholder="Target (e.g., example.com)" style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+            <input id="plan-task" type="text" placeholder="Task (e.g., full bug bounty)" style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+            <button id="plan-generate-btn" class="btn btn-sm">Generate</button>
+            <button id="plan-load-run-btn" class="btn btn-secondary btn-sm" title="Load plan of selected run">Run Plan</button>
+          </div>
+          <pre id="plan-results" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12px; max-height: 400px; overflow: auto; white-space: pre-wrap;">No plan yet</pre>
+        </div>
+      </div>
+
+      <!-- Tool Selector -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header"><i class="fa-solid fa-toolbox"></i> Tool Selector</div>
+        <div style="padding: 12px;">
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <select id="toolsel-vuln" class="agent-select" style="flex: 1;">
+              <option value="sql-injection">sql-injection</option>
+              <option value="xss">xss</option>
+              <option value="ssrf">ssrf</option>
+              <option value="lfi">lfi</option>
+              <option value="command-injection">command-injection</option>
+              <option value="file-upload">file-upload</option>
+              <option value="auth-bypass">auth-bypass</option>
+              <option value="idor">idor</option>
+              <option value="xxe">xxe</option>
+              <option value="ssti">ssti</option>
+              <option value="csrf">csrf</option>
+              <option value="jwt">jwt</option>
+              <option value="deserialization">deserialization</option>
+              <option value="race-condition">race-condition</option>
+            </select>
+            <button id="toolsel-btn" class="btn btn-sm">Select Tools</button>
+          </div>
+          <pre id="toolsel-results" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12px; max-height: 300px; overflow: auto; white-space: pre-wrap;">Select a vulnerability type</pre>
+        </div>
+      </div>
+
+      <!-- Chain Identifier -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header"><i class="fa-solid fa-link"></i> Vulnerability Chains</div>
+        <div style="padding: 12px;">
+          <textarea id="chains-findings" placeholder='[{"type":"xss","title":"Reflected XSS","severity":"medium"}]' style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: var(--text); font-size: 12px; min-height: 80px; font-family: ui-monospace, monospace; margin-bottom: 8px;"></textarea>
+          <button id="chains-btn" class="btn btn-sm">Identify Chains</button>
+          <pre id="chains-results" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12px; max-height: 300px; overflow: auto; white-space: pre-wrap; margin-top: 8px;">Paste findings JSON</pre>
+        </div>
+      </div>
+
+      <!-- Exploit Generator -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header"><i class="fa-solid fa-bomb"></i> Exploit Generator</div>
+        <div style="padding: 12px;">
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <select id="exploit-type" class="agent-select" style="flex: 1;">
+              <option value="time-based-blind-sqli">time-based-blind-sqli</option>
+              <option value="dom-xss">dom-xss</option>
+              <option value="ssrf-dns-rebinding">ssrf-dns-rebinding</option>
+              <option value="file-upload-double-extension">file-upload-double-extension</option>
+              <option value="jwt-algorithm-confusion">jwt-algorithm-confusion</option>
+              <option value="race-condition">race-condition</option>
+              <option value="deserialization">deserialization</option>
+            </select>
+            <input id="exploit-target" type="text" placeholder="Target URL" style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+            <input id="exploit-param" type="text" placeholder="Param (default: id)" style="width: 140px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+            <button id="exploit-generate-btn" class="btn btn-sm">Generate</button>
+          </div>
+          <pre id="exploit-results" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12px; max-height: 300px; overflow: auto; white-space: pre-wrap;">No exploit generated</pre>
+        </div>
+      </div>
+
+      <!-- Report Generator -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header"><i class="fa-solid fa-file-lines"></i> Business Report</div>
+        <div style="padding: 12px;">
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <input id="report-target" type="text" placeholder="Target (e.g., example.com)" style="flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 14px;">
+            <button id="report-generate-btn" class="btn btn-sm">Generate Report</button>
+          </div>
+          <textarea id="report-findings" placeholder='[{"title":"Reflected XSS","severity":"medium","detail":"search param"}]' style="width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: var(--text); font-size: 12px; min-height: 80px; font-family: ui-monospace, monospace; margin-bottom: 8px;"></textarea>
+          <pre id="report-results" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12px; max-height: 400px; overflow: auto; white-space: pre-wrap;">No report generated</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Runs -->
+    <div class="section-title" style="margin-top: 24px;">Recent Runs</div>
+    <div id="runs-list">
+      <div class="empty-state">
+        <i class="fa-solid fa-list-check"></i>
+        <p>No runs yet</p>
+      </div>
+    </div>
+
+    <!-- File Viewer Modal -->
+    <div id="file-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span id="modal-title" class="font-semibold">File</span>
+          <button id="modal-close" class="modal-close">&times;</button>
+        </div>
+        <div id="modal-body" class="file-content">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = {
+      agents: '/api/agents',
+      runs: '/api/runs',
+      run: (id) => `/api/runs/${id}`,
+      runStream: (id) => `/api/runs/${id}/stream`,
+      runLaunch: (agent) => `/api/agents/${agent}/run`,
+      loot: (path) => `/api/loot?path=${encodeURIComponent(path)}`,
+      lootFile: (path) => `/api/loot/file?path=${encodeURIComponent(path)}`,
+      reports: '/api/reports',
+      strategy: '/api/evolution/strategy',
+      guidance: (task, agent) => `/api/evolution/guidance?task=${encodeURIComponent(task)}&agent=${encodeURIComponent(agent)}`,
+      ragSearch: (q) => `/api/rag/search?q=${encodeURIComponent(q)}`,
+      workflowParallel: '/api/workflow/parallel',
+      workflowChain: '/api/workflow/chain',
+      vpnStatus: '/api/vpn/status',
+      zapStatus: 'http://127.0.0.1:8090/JSON/core/view/version/',
+      qdrantStatus: 'http://127.0.0.1:6333/collections',
+      dvwaStatus: 'http://127.0.0.1:8080/',
+      authTargets: '/api/auth/targets',
+      authCheck: '/api/auth/check',
+      authImport: '/api/auth/import',
+    };
+
+    let currentRunId = null;
+    let eventSource = null;
+    let agents = [];
+
+    // --- Init ---
+    async function init() {
+      await loadAgents();
+      await checkStatus();
+      await loadRuns();
+      await loadAuthTargets();
+      await loadVpnConnections();
+      setInterval(loadRuns, 5000);
+      setInterval(checkStatus, 10000);
+      setInterval(loadAuthTargets, 30000);
+      setInterval(loadVpnConnections, 15000);
+      setInterval(() => { if (currentRunId) loadPhases(currentRunId); }, 5000);
+    }
+
+    // --- Status indicators ---
+    async function checkStatus() {
+      const checks = [
+        { id: 'status-zap', url: API.zapStatus, name: 'ZAP' },
+        { id: 'status-qdrant', url: API.qdrantStatus, name: 'Qdrant' },
+        { id: 'status-dvwa', url: API.dvwaStatus, name: 'DVWA' },
+      ];
+      for (const check of checks) {
+        try {
+          const res = await fetch(check.url, { mode: 'no-cors' });
+          document.getElementById(check.id).innerHTML = `<span class="status-dot status-on"></span>${check.name}`;
+        } catch {
+          document.getElementById(check.id).innerHTML = `<span class="status-dot status-off"></span>${check.name}`;
+        }
+      }
+      try {
+        const res = await fetch(API.vpnStatus);
+        const data = await res.json();
+        const isConnected = data.status === 'connected';
+        document.getElementById('status-vpn').innerHTML = `<span class="status-dot ${isConnected ? 'status-on' : 'status-off'}"></span>VPN`;
+      } catch {
+        document.getElementById('status-vpn').innerHTML = '<span class="status-dot status-off"></span>VPN';
+      }
+    }
+
+    // --- Load agents ---
+    async function loadAgents() {
+      try {
+        const res = await fetch(API.agents);
+        const data = await res.json();
+        agents = data.agents || [];
+        const select = document.getElementById('agent-select');
+        select.innerHTML = '<option value="">Select agent...</option>' +
+          agents.map(a => `<option value="${a.name}" data-category="${a.category}">${a.name}</option>`).join('');
+      } catch (err) {
+        console.error('Failed to load agents:', err);
+      }
+    }
+
+    // --- Load runs ---
+    async function loadRuns() {
+      try {
+        const res = await fetch(API.runs);
+        const data = await res.json();
+        const list = document.getElementById('runs-list');
+        if (!data.runs || !data.runs.length) {
+          list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-list-check"></i><p>No runs yet</p></div>';
+          return;
+        }
+        list.innerHTML = data.runs.map(r => `
+          <div class="run-card" data-run-id="${r.run_id}">
+            <div class="run-header">
+              <span class="run-agent">${r.agent}</span>
+              <span class="tag tag-${r.status === 'done' ? 'success' : r.status === 'failed' ? 'danger' : r.status === 'running' ? 'info' : 'warning'}">${r.status}</span>
+            </div>
+            <div class="run-task">${r.task}</div>
+            <div class="run-meta">${r.model || 'k3'} · ${r.run_id} · ${r.lessons_injected || 0} lessons injected</div>
+          </div>
+        `).join('');
+        list.querySelectorAll('.run-card').forEach(card => {
+          card.addEventListener('click', () => loadRun(card.dataset.runId));
+        });
+      } catch (err) {
+        console.error('Failed to load runs:', err);
+      }
+    }
+
+    // --- Engagement phases panel ---
+    async function loadPhases(runId) {
+      const panel = document.getElementById('phases-panel');
+      try {
+        const res = await fetch(`/api/runs/${runId}/phases`);
+        if (!res.ok) { panel.style.display = 'none'; return; }
+        const data = await res.json();
+        const badge = (s) => {
+          const colors = { done: '#22c55e', in_progress: '#eab308', blocked: '#ef4444', pending: '#6b7280' };
+          return `<span style="display:inline-block;padding:1px 8px;border-radius:8px;font-size:10px;background:${colors[s] || '#6b7280'}22;color:${colors[s] || '#6b7280'};border:1px solid ${colors[s] || '#6b7280'};">${s.replace('_', ' ')}</span>`;
+        };
+        document.getElementById('phases-list').innerHTML = data.phases.map(p =>
+          `<div style="display:flex;gap:8px;align-items:center;padding:3px 0;">
+            ${badge(p.status)}
+            <span style="flex:1;">${p.number}. ${p.name}</span>
+            <span style="color:var(--muted);font-size:10px;">${p.attempts ? p.attempts + ' attempt' + (p.attempts > 1 ? 's' : '') : ''}${p.approaches_tried && p.approaches_tried.length ? ' (' + p.approaches_tried.join(' → ') + ')' : ''}</span>
+          </div>`
+        ).join('');
+        panel.style.display = 'block';
+      } catch { panel.style.display = 'none'; }
+    }
+
+    // --- Load run details ---
+    async function loadRun(runId) {
+      currentRunId = runId;
+      try {
+        const res = await fetch(API.run(runId));
+        const data = await res.json();
+        showMethodology(data.agent);
+        showTools(data.log_file);
+        loadLogTail(runId);
+        connectSSE(runId);
+        loadEvidence(runId);
+        loadStrategy();
+        loadNextSteps(data.task, data.agent);
+        showRunActions(data);
+        loadPhases(runId);
+      } catch (err) {
+        console.error('Failed to load run:', err);
+      }
+    }
+
+    // --- Run actions (continue/feedback) ---
+    function showRunActions(run) {
+      const container = document.getElementById('log-viewer');
+      const existing = document.getElementById('run-actions');
+      if (existing) existing.remove();
+
+      const actions = document.createElement('div');
+      actions.id = 'run-actions';
+      actions.style.cssText = 'margin-bottom: 12px; padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 8px;';
+
+      if (run.status === 'running') {
+        actions.innerHTML = `
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: var(--muted);">Send instruction to running agent:</span>
+          </div>
+          <div class="input-row">
+            <input id="instruction-input" type="text" placeholder="e.g., 'Focus on the API endpoints' or 'Try a different approach'" style="flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px;">
+            <button id="instruction-btn" class="btn btn-sm">Send</button>
+          </div>
+          <div id="findings-panel" style="margin-top: 12px; max-height: 200px; overflow-y: auto;">
+            <div style="font-size: 11px; color: var(--muted); margin-bottom: 6px;">Real-time findings:</div>
+            <div id="findings-list" style="font-size: 11px;"></div>
+          </div>
+        `;
+      } else if (run.status === 'done' || run.status === 'failed' || run.status === 'timeout') {
+        actions.innerHTML = `
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: var(--muted);">Continue this run with additional instructions:</span>
+          </div>
+          <div class="input-row">
+            <input id="continue-input" type="text" placeholder="e.g., 'Continue with the exploitation phase' or 'Focus on the demo subdomains'" style="flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px;">
+            <button id="continue-btn" class="btn btn-sm">Continue</button>
+          </div>
+          <div id="findings-panel" style="margin-top: 12px; max-height: 200px; overflow-y: auto;">
+            <div style="font-size: 11px; color: var(--muted); margin-bottom: 6px;">Findings from this run:</div>
+            <div id="findings-list" style="font-size: 11px;"></div>
+          </div>
+        `;
+      }
+
+      container.parentNode.insertBefore(actions, container);
+
+      if (run.status === 'running') {
+        document.getElementById('instruction-btn').addEventListener('click', async () => {
+          const instruction = document.getElementById('instruction-input').value.trim();
+          if (!instruction) return;
+          try {
+            await fetch(`${API.run(run.run_id)}/instructions`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ instruction }),
+            });
+            document.getElementById('instruction-input').value = '';
+            appendLog(`\n==> INSTRUCTION: ${instruction}`);
+          } catch (err) {
+            alert('Instruction failed: ' + err.message);
+          }
+        });
+
+        // Poll for findings every 2 seconds
+        const findingsInterval = setInterval(async () => {
+          try {
+            const res = await fetch(`${API.run(run.run_id)}/findings`);
+            const data = await res.json();
+            const list = document.getElementById('findings-list');
+            if (data.findings && data.findings.length) {
+              list.innerHTML = data.findings.map(f => `
+                <div style="padding: 4px 0; border-bottom: 1px solid var(--border);">
+                  <span class="tag tag-${f.severity === 'critical' ? 'danger' : f.severity === 'high' ? 'warning' : f.severity === 'medium' ? 'info' : 'success'}" style="font-size: 10px;">${f.severity}</span>
+                  <span style="font-weight: 600;">${f.title}</span>
+                  <div style="color: var(--muted); font-size: 10px;">${f.detail}</div>
+                </div>
+              `).join('');
+            } else {
+              list.innerHTML = '<div style="color: var(--dim);">No findings yet...</div>';
+            }
+          } catch {}
+        }, 2000);
+
+        // Clear interval when run completes
+        const checkComplete = setInterval(async () => {
+          try {
+            const res = await fetch(API.run(run.run_id));
+            const data = await res.json();
+            if (data.status !== 'running') {
+              clearInterval(findingsInterval);
+              clearInterval(checkComplete);
+              showRunActions(data);
+            }
+          } catch {}
+        }, 5000);
+      } else {
+        document.getElementById('continue-btn').addEventListener('click', async () => {
+          const instructions = document.getElementById('continue-input').value.trim();
+          if (!instructions) return;
+          try {
+            const res = await fetch(`${API.run(run.run_id)}/continue`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ instructions }),
+            });
+            const data = await res.json();
+            alert(`Continued as new run: ${data.run_id}`);
+            loadRuns();
+            loadRun(data.run_id);
+          } catch (err) {
+            alert('Continue failed: ' + err.message);
+          }
+        });
+
+        // Load findings for completed run
+        try {
+          const res = await fetch(`${API.run(run.run_id)}/findings`);
+          const data = await res.json();
+          const list = document.getElementById('findings-list');
+          if (data.findings && data.findings.length) {
+            list.innerHTML = data.findings.map(f => `
+              <div style="padding: 4px 0; border-bottom: 1px solid var(--border);">
+                <span class="tag tag-${f.severity === 'critical' ? 'danger' : f.severity === 'high' ? 'warning' : f.severity === 'medium' ? 'info' : 'success'}" style="font-size: 10px;">${f.severity}</span>
+                <span style="font-weight: 600;">${f.title}</span>
+                <div style="color: var(--muted); font-size: 10px;">${f.detail}</div>
+              </div>
+            `).join('');
+          } else {
+            list.innerHTML = '<div style="color: var(--dim);">No findings recorded</div>';
+          }
+        } catch {}
+      }
+    }
+
+    // --- Methodology stepper ---
+    function showMethodology(agent) {
+      const section = document.getElementById('methodology-section');
+      const container = document.getElementById('methodology');
+      const steps = getMethodologySteps(agent);
+      section.style.display = 'block';
+      container.innerHTML = steps.map((step, i) => `
+        <div class="method-step ${step.status}">
+          <div class="step-number ${step.status}">${step.status === 'completed' ? '✓' : i + 1}</div>
+          <span>${step.name}</span>
+        </div>
+      `).join('');
+    }
+
+    function getMethodologySteps(agent) {
+      const baseSteps = [
+        { name: 'Recon', status: 'completed' },
+        { name: 'ZAP Baseline', status: 'completed' },
+        { name: 'Targeted Scan', status: 'active' },
+        { name: 'Exploit', status: 'pending' },
+        { name: 'Report', status: 'pending' },
+      ];
+      if (agent === 'bug-bounty') return baseSteps;
+      if (agent === 'recon' || agent === 'mitre/recon') return [
+        { name: 'Host Discovery', status: 'completed' },
+        { name: 'Port Scan', status: 'active' },
+        { name: 'Service Enum', status: 'pending' },
+        { name: 'Report', status: 'pending' },
+      ];
+      if (agent === 'web') return [
+        { name: 'Recon', status: 'completed' },
+        { name: 'Path Discovery', status: 'active' },
+        { name: 'Vuln Scan', status: 'pending' },
+        { name: 'Report', status: 'pending' },
+      ];
+      if (agent.startsWith('owasp/')) return [
+        { name: 'Recon', status: 'completed' },
+        { name: 'OWASP Test', status: 'active' },
+        { name: 'Verify', status: 'pending' },
+        { name: 'Report', status: 'pending' },
+      ];
+      return baseSteps;
+    }
+
+    // --- Tools used ---
+    async function showTools(logFile) {
+      const section = document.getElementById('tools-section');
+      const container = document.getElementById('tools');
+      try {
+        const res = await fetch(`/api/runs/${currentRunId}`);
+        const data = await res.json();
+        const tail = data.tail || '';
+        const tools = extractTools(tail);
+        section.style.display = 'block';
+        container.innerHTML = tools.map(t => `
+          <span class="tool ${t.success ? 'success' : 'failed'}">${t.name}</span>
+        `).join('') || '<span class="text-slate-500">No tools detected yet</span>';
+      } catch (err) {
+        console.error('Failed to load tools:', err);
+      }
+    }
+
+    function extractTools(log) {
+      const toolPatterns = [
+        { name: 'nmap', pattern: /\bnmap\b/i },
+        { name: 'masscan', pattern: /\bmasscan\b/i },
+        { name: 'rustscan', pattern: /\brustscan\b/i },
+        { name: 'zap', pattern: /\bzap\b|ZAP/i },
+        { name: 'sqlmap', pattern: /\bsqlmap\b/i },
+        { name: 'gobuster', pattern: /\bgobuster\b/i },
+        { name: 'ffuf', pattern: /\bffuf\b/i },
+        { name: 'nikto', pattern: /\bnikto\b/i },
+        { name: 'nuclei', pattern: /\bnuclei\b/i },
+        { name: 'whatweb', pattern: /\bwhatweb\b/i },
+        { name: 'curl', pattern: /\bcurl\b/i },
+        { name: 'wget', pattern: /\bwget\b/i },
+        { name: 'python3', pattern: /\bpython3\b/i },
+        { name: 'httpie', pattern: /\bhttpie\b|\bhttp\b/i },
+        { name: 'jq', pattern: /\bjq\b/i },
+        { name: 'subfinder', pattern: /\bsubfinder\b/i },
+        { name: 'amass', pattern: /\bamass\b/i },
+        { name: 'hydra', pattern: /\bhydra\b/i },
+        { name: 'metasploit', pattern: /\bmetasploit\b|\bmsfconsole\b/i },
+        { name: 'burpsuite', pattern: /\bburpsuite\b|\bburp\b/i },
+        { name: 'netexec', pattern: /\bnetexec\b|\bnxc\b/i },
+        { name: 'impacket', pattern: /\bimpacket\b/i },
+        { name: 'bloodhound', pattern: /\bbloodhound\b/i },
+        { name: 'responder', pattern: /\bresponder\b/i },
+        { name: 'john', pattern: /\bjohn\b/i },
+        { name: 'hashcat', pattern: /\bhashcat\b/i },
+      ];
+      const failedPatterns = [/operation not permitted/i, /permission denied/i, /blocked/i, /failed/i, /error/i, /not found/i];
+      return toolPatterns.map(t => ({
+        name: t.name,
+        success: t.pattern.test(log) && !failedPatterns.some(p => p.test(log)),
+      })).filter(t => t.success || t.pattern.test(log));
+    }
+
+    // --- Live log ---
+    function loadLogTail(runId) {
+      const viewer = document.getElementById('log-viewer');
+      viewer.innerHTML = '<div class="loading"></div> Loading...';
+    }
+
+    function connectSSE(runId) {
+      if (eventSource) eventSource.close();
+      const viewer = document.getElementById('log-viewer');
+      viewer.innerHTML = '';
+      eventSource = new EventSource(API.runStream(runId));
+      document.getElementById('status-sse').innerHTML = '<span class="status-dot status-on"></span>Live';
+      eventSource.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        if (data.line) appendLog(data.line);
+        if (data.status) {
+          appendLog(`\n==> Final status: ${data.status} (exit ${data.exit_code ?? '?'})`);
+          setTimeout(() => { if (eventSource) eventSource.close(); }, 1500);
+        }
+      };
+      eventSource.onerror = () => {
+        document.getElementById('status-sse').innerHTML = '<span class="status-dot status-off"></span>Live';
+      };
+    }
+
+    function appendLog(line) {
+      const viewer = document.getElementById('log-viewer');
+      const div = document.createElement('div');
+      div.className = 'log-line';
+      if (line.includes('==>') || line.includes('Error') || line.includes('FAILED')) {
+        div.classList.add('highlight');
+      }
+      div.textContent = line;
+      viewer.appendChild(div);
+      viewer.scrollTop = viewer.scrollHeight;
+    }
+
+    // --- Evidence ---
+    async function loadEvidence(runId) {
+      try {
+        const res = await fetch(API.run(runId));
+        const data = await res.json();
+        const tail = data.tail || '';
+        const evidencePaths = [...new Set(tail.match(/\/work\/loot\/[^\s"']+/g) || [])];
+        const list = document.getElementById('evidence-list');
+        if (!evidencePaths.length) {
+          list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-folder-open"></i><p>No evidence yet</p></div>';
+          return;
+        }
+        list.innerHTML = evidencePaths.map(p => `
+          <div class="evidence-item" data-path="${p}">
+            <i class="fa-solid fa-file"></i>
+            <span>${p}</span>
+            <span class="evidence-size">view</span>
+          </div>
+        `).join('');
+        list.querySelectorAll('.evidence-item').forEach(item => {
+          item.addEventListener('click', () => viewFile(item.dataset.path));
+        });
+      } catch (err) {
+        console.error('Failed to load evidence:', err);
+      }
+    }
+
+    async function viewFile(path) {
+      const modal = document.getElementById('file-modal');
+      const title = document.getElementById('modal-title');
+      const body = document.getElementById('modal-body');
+      title.textContent = path;
+      body.textContent = 'Loading...';
+      modal.classList.add('active');
+      try {
+        const res = await fetch(API.lootFile(path));
+        const text = await res.text();
+        body.textContent = text.slice(0, 10000);
+      } catch (err) {
+        body.textContent = 'Failed to load file: ' + err.message;
+      }
+    }
+
+    document.getElementById('modal-close').addEventListener('click', () => {
+      document.getElementById('file-modal').classList.remove('active');
+    });
+    document.getElementById('file-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'file-modal') e.target.classList.remove('active');
+    });
+
+    // --- Strategy ---
+    async function loadStrategy() {
+      try {
+        const res = await fetch(API.strategy);
+        const data = await res.json();
+        const scenarios = Object.entries(data.scenarios || {});
+        const list = document.getElementById('strategy-list');
+        if (!scenarios.length) {
+          list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-brain"></i><p>No strategy data yet</p></div>';
+          return;
+        }
+        list.innerHTML = scenarios.sort((a, b) => (b[1].confidence || 0) - (a[1].confidence || 0)).map(([name, s]) => `
+          <div class="strategy-item">
+            <span class="strategy-name">${name}</span>
+            <span class="strategy-stats">${(s.success_rate || 0) * 100}% · conf ${(s.confidence || 0).toFixed(2)} · ${s.run_count || 0} runs</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width: ${(s.success_rate || 0) * 100}%;"></div></div>
+        `).join('');
+      } catch (err) {
+        console.error('Failed to load strategy:', err);
+      }
+    }
+
+    // --- Next steps ---
+    async function loadNextSteps(task, agent) {
+      try {
+        const res = await fetch(API.guidance(task, agent));
+        const data = await res.json();
+        const guidance = data.guidance || '';
+        const list = document.getElementById('next-steps-list');
+        if (!guidance) {
+          list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-forward-step"></i><p>No suggestions yet</p></div>';
+          return;
+        }
+        const nextSteps = guidance.match(/Suggested next steps.*?:\s*(.+)/i);
+        const suggestions = nextSteps ? nextSteps[1].split(',').map(s => s.trim()) : [];
+        list.innerHTML = suggestions.map(s => `
+          <div class="next-step-card" data-agent="${s}">
+            <div class="next-step-name">${s}</div>
+            <div class="next-step-desc">Launch ${s} based on scenario guidance</div>
+          </div>
+        `).join('') || '<div class="empty-state"><i class="fa-solid fa-forward-step"></i><p>No suggestions yet</p></div>';
+        list.querySelectorAll('.next-step-card').forEach(card => {
+          card.addEventListener('click', () => {
+            document.getElementById('agent-select').value = card.dataset.agent;
+            document.getElementById('task-input').value = `Follow up on ${task}`;
+            document.getElementById('launch-btn').click();
+          });
+        });
+      } catch (err) {
+        console.error('Failed to load next steps:', err);
+      }
+    }
+
+    // --- Authorization ---
+    async function checkAuth(target) {
+      try {
+        const res = await fetch(`${API.authCheck}?target=${encodeURIComponent(target)}`);
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        console.error('Auth check failed:', err);
+        return { authorized: false, reason: 'auth check failed' };
+      }
+    }
+
+    async function loadAuthTargets() {
+      try {
+        const res = await fetch(API.authTargets);
+        const data = await res.json();
+        const list = document.getElementById('auth-targets-list');
+        if (!data.targets || !data.targets.length) {
+          list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-shield-halved"></i><p>No authorized targets yet</p></div>';
+          return;
+        }
+        list.innerHTML = data.targets.map(t => `
+          <div class="strategy-item">
+            <div>
+              <span class="strategy-name">${t.domain}</span>
+              <span class="tag tag-${t.type === 'lab' ? 'info' : t.type === 'ctf' ? 'warning' : t.type === 'bug-bounty' ? 'purple' : 'success'}" style="margin-left: 8px;">${t.type}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="strategy-stats">${t.notes || ''}</span>
+              <button class="btn btn-secondary btn-sm remove-target-btn" data-domain="${t.domain}" style="padding: 4px 8px; font-size: 11px;">Remove</button>
+            </div>
+          </div>
+        `).join('');
+        list.querySelectorAll('.remove-target-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!confirm(`Remove ${btn.dataset.domain} from authorized targets?`)) return;
+            try {
+              await fetch(`${API.authTargets}/${encodeURIComponent(btn.dataset.domain)}`, { method: 'DELETE' });
+              loadAuthTargets();
+            } catch (err) {
+              alert('Remove failed: ' + err.message);
+            }
+          });
+        });
+      } catch (err) {
+        console.error('Failed to load auth targets:', err);
+      }
+    }
+
+    // --- Launch ---
+    document.getElementById('launch-btn').addEventListener('click', async () => {
+      const agent = document.getElementById('agent-select').value;
+      const task = document.getElementById('task-input').value.trim();
+      if (!agent || !task) return alert('Select an agent and enter a task.');
+
+      // Check authorization first
+      const auth = await checkAuth(task);
+      if (!auth.authorized) {
+        if (auth.requires_override) {
+          showOverrideWarning(auth.override_text || 'This target requires explicit authorization confirmation.');
+          return;
+        } else {
+          alert(`Target not authorized: ${auth.reason}\n\nAdd it to the Targets tab or use an authorized target.`);
+          return;
+        }
+      }
+
+      const btn = document.getElementById('launch-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span> Starting...';
+      try {
+        const res = await fetch(API.runLaunch(agent), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        currentRunId = data.run_id;
+        showMethodology(agent);
+        loadRun(data.run_id);
+        document.getElementById('task-input').value = '';
+        hideOverrideWarning();
+      } catch (err) {
+        alert('Launch failed: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Launch';
+      }
+    });
+
+    function showOverrideWarning(text) {
+      document.getElementById('auth-warning-text').textContent = text;
+      document.getElementById('auth-warning').style.display = 'block';
+      document.getElementById('override-confirm').focus();
+    }
+
+    function hideOverrideWarning() {
+      document.getElementById('auth-warning').style.display = 'none';
+      document.getElementById('override-confirm').value = '';
+    }
+
+    document.getElementById('override-btn').addEventListener('click', async () => {
+      const agent = document.getElementById('agent-select').value;
+      const task = document.getElementById('task-input').value.trim();
+      const confirmText = document.getElementById('override-confirm').value.trim();
+      if (!confirmText) return alert('Type the confirmation text to override.');
+
+      try {
+        const res = await fetch(API.authCheck, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target: task, override: true, confirm_text: confirmText }),
+        });
+        const auth = await res.json();
+        if (!auth.authorized) {
+          alert(`Override failed: ${auth.reason}`);
+          return;
+        }
+
+        // Proceed with launch
+        const btn = document.getElementById('launch-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> Starting...';
+        try {
+          const res2 = await fetch(API.runLaunch(agent), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task }),
+          });
+          if (!res2.ok) throw new Error(await res2.text());
+          const data = await res2.json();
+          currentRunId = data.run_id;
+          showMethodology(agent);
+          loadRun(data.run_id);
+          document.getElementById('task-input').value = '';
+          hideOverrideWarning();
+        } catch (err) {
+          alert('Launch failed: ' + err.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-play"></i> Launch';
+        }
+      } catch (err) {
+        alert('Override check failed: ' + err.message);
+      }
+    });
+
+    document.getElementById('override-cancel').addEventListener('click', hideOverrideWarning);
+
+    // --- Authorized Targets Management ---
+    document.getElementById('add-target-btn').addEventListener('click', async () => {
+      const domain = document.getElementById('new-target-domain').value.trim();
+      const type = document.getElementById('new-target-type').value;
+      const notes = document.getElementById('new-target-notes').value.trim();
+      if (!domain) return alert('Enter a domain.');
+      try {
+        const res = await fetch(API.authTargets, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domain, type, notes }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        document.getElementById('new-target-domain').value = '';
+        document.getElementById('new-target-notes').value = '';
+        loadAuthTargets();
+      } catch (err) {
+        alert('Add target failed: ' + err.message);
+      }
+    });
+
+    document.getElementById('import-btn').addEventListener('click', async () => {
+      const platform = document.getElementById('import-platform').value;
+      const scopeText = document.getElementById('import-scope').value.trim();
+      if (!scopeText) return alert('Paste scope JSON first.');
+      try {
+        const scope = JSON.parse(scopeText);
+        const res = await fetch(API.authImport, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ platform, scope }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        alert(`Imported: ${data.added || 0} added, ${data.skipped || 0} skipped`);
+        document.getElementById('import-scope').value = '';
+        loadAuthTargets();
+      } catch (err) {
+        alert('Import failed: ' + err.message);
+      }
+    });
+
+    // --- Preset targets ---
+    function addPreset(domain, type, notes) {
+      document.getElementById('new-target-domain').value = domain;
+      document.getElementById('new-target-type').value = type;
+      document.getElementById('new-target-notes').value = notes;
+      document.getElementById('add-target-btn').click();
+    }
+
+    // --- Bulk add ---
+    document.getElementById('bulk-add-btn').addEventListener('click', () => {
+      const section = document.getElementById('bulk-add-section');
+      section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.getElementById('bulk-add-submit').addEventListener('click', async () => {
+      const text = document.getElementById('bulk-add-text').value.trim();
+      const type = document.getElementById('bulk-add-type').value;
+      if (!text) return alert('Enter domains, one per line.');
+      const domains = text.split('\n').map(d => d.trim()).filter(d => d);
+      let added = 0, failed = 0;
+      for (const domain of domains) {
+        try {
+          const res = await fetch(API.authTargets, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ domain, type, notes: 'Bulk added' }),
+          });
+          const data = await res.json();
+          if (data.error) failed++;
+          else added++;
+        } catch {
+          failed++;
+        }
+      }
+      alert(`Bulk add complete: ${added} added, ${failed} failed`);
+      document.getElementById('bulk-add-text').value = '';
+      document.getElementById('bulk-add-section').style.display = 'none';
+      loadAuthTargets();
+    });
+
+    // --- Auth Wall ---
+    function launchAuthWall(type) {
+      const target = document.getElementById('auth-target').value.trim();
+      const username = document.getElementById('auth-username').value.trim();
+      const password = document.getElementById('auth-password').value.trim();
+      if (!target) return alert('Enter a target URL.');
+      if (!username || !password) return alert('Enter username and password.');
+
+      let agent, task;
+      switch (type) {
+        case 'login':
+          agent = 'auth-wall/login';
+          task = `Test login form at ${target} with username ${username}. Analyze form fields, CSRF protection, and test for bypass techniques.`;
+          break;
+        case 'session':
+          agent = 'auth-wall/session';
+          task = `Test session management at ${target} with username ${username}. Analyze cookies, tokens, session fixation, and hijacking vulnerabilities.`;
+          break;
+        case 'post-auth':
+          agent = 'auth-wall/post-auth';
+          task = `Test authenticated area at ${target} with username ${username}. Test privilege escalation, IDOR, and access control after login.`;
+          break;
+        case 'full':
+          agent = 'bug-bounty';
+          task = `Run a full bug bounty on ${target} with username ${username} and password ${password}. Include auth wall testing (login, session, post-auth).`;
+          break;
+      }
+
+      document.getElementById('agent-select').value = agent;
+      document.getElementById('task-input').value = task;
+      document.getElementById('launch-btn').click();
+    }
+
+    // --- User Scenarios ---
+    function loadScenarioTemplate(type) {
+      const templates = {
+        login: [
+          {"action": "navigate", "url": "http://dvwa/login.php"},
+          {"action": "fill", "selector": "input[name='username']", "value": "admin"},
+          {"action": "fill", "selector": "input[name='password']", "value": "password"},
+          {"action": "click", "selector": "input[name='Login']"},
+          {"action": "wait", "condition": "url_contains", "value": "index.php"},
+          {"action": "screenshot", "name": "login_success"}
+        ],
+        register: [
+          {"action": "navigate", "url": "http://dvwa/register.php"},
+          {"action": "fill", "selector": "input[name='username']", "value": "testuser"},
+          {"action": "fill", "selector": "input[name='password']", "value": "testpass123"},
+          {"action": "fill", "selector": "input[name='password2']", "value": "testpass123"},
+          {"action": "click", "selector": "input[name='Register']"},
+          {"action": "wait", "condition": "text_present", "value": "success"},
+          {"action": "screenshot", "name": "register_success"}
+        ],
+        checkout: [
+          {"action": "navigate", "url": "http://dvwa/vulnerabilities/exec/"},
+          {"action": "fill", "selector": "input[name='ip']", "value": "127.0.0.1"},
+          {"action": "click", "selector": "input[name='Submit']"},
+          {"action": "wait", "condition": "text_present", "value": "PING"},
+          {"action": "screenshot", "name": "command_injection_test"}
+        ]
+      };
+      document.getElementById('scenario-steps').value = JSON.stringify(templates[type] || templates.login, null, 2);
+    }
+
+    async function launchScenario() {
+      const name = document.getElementById('scenario-name').value.trim();
+      const target = document.getElementById('scenario-target').value.trim();
+      const stepsText = document.getElementById('scenario-steps').value.trim();
+      if (!name || !target || !stepsText) return alert('Fill in name, target, and steps.');
+
+      let steps;
+      try {
+        steps = JSON.parse(stepsText);
+      } catch {
+        return alert('Invalid JSON in steps.');
+      }
+
+      const scenario = { name, target, steps };
+      const task = `Execute user scenario "${name}" on ${target} with steps: ${JSON.stringify(steps)}. Use browser automation to perform each step, capture screenshots, and validate results.`;
+
+      document.getElementById('agent-select').value = 'user-scenario/executor';
+      document.getElementById('task-input').value = task;
+      document.getElementById('launch-btn').click();
+    }
+
+    // --- VPN Management ---
+    document.getElementById('vpn-upload-btn').addEventListener('click', () => {
+      document.getElementById('vpn-profile-file').click();
+    });
+
+    document.getElementById('vpn-profile-file').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('vpn-profile-content').value = e.target.result;
+        document.getElementById('vpn-profile-name').value = file.name.replace('.ovpn', '');
+      };
+      reader.readAsText(file);
+    });
+
+    async function vpnConnect() {
+      const name = document.getElementById('vpn-profile-name').value.trim();
+      const content = document.getElementById('vpn-profile-content').value.trim();
+      if (!name || !content) return alert('Enter profile name and content.');
+      try {
+        const res = await fetch('/api/vpn/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, content }),
+        });
+        const data = await res.json();
+        document.getElementById('vpn-status-display').innerHTML = `
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Connecting to ${name}</span>
+              <span class="tag tag-warning">connecting</span>
+            </div>
+            <div class="card-subtitle">${data.message || 'Establishing VPN connection...'}</div>
+          </div>
+        `;
+        loadVpnConnections();
+      } catch (err) {
+        alert('VPN connect failed: ' + err.message);
+      }
+    }
+
+    async function vpnDisconnect() {
+      try {
+        const res = await fetch('/api/vpn/disconnect', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('vpn-status-display').innerHTML = `
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Disconnected</span>
+              <span class="tag tag-info">off</span>
+            </div>
+            <div class="card-subtitle">${data.message || 'VPN connection closed'}</div>
+          </div>
+        `;
+        loadVpnConnections();
+      } catch (err) {
+        alert('VPN disconnect failed: ' + err.message);
+      }
+    }
+
+    async function vpnStatus() {
+      try {
+        const res = await fetch('/api/vpn/status');
+        const data = await res.json();
+        const status = data.status || 'unknown';
+        const tagClass = status === 'connected' ? 'tag-success' : status === 'connecting' ? 'tag-warning' : 'tag-info';
+        document.getElementById('vpn-status-display').innerHTML = `
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">VPN Status: ${status}</span>
+              <span class="tag ${tagClass}">${status}</span>
+            </div>
+            <div class="card-subtitle">${data.message || 'Current VPN connection status'}</div>
+          </div>
+        `;
+      } catch (err) {
+        alert('VPN status failed: ' + err.message);
+      }
+    }
+
+    async function vpnSaveProfile() {
+      const name = document.getElementById('vpn-profile-name').value.trim();
+      const content = document.getElementById('vpn-profile-content').value.trim();
+      if (!name || !content) return alert('Enter profile name and content.');
+      try {
+        const res = await fetch('/api/vpn/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, content }),
+        });
+        const data = await res.json();
+        alert(`Profile saved: ${data.message || name}`);
+        loadVpnConnections();
+      } catch (err) {
+        alert('VPN save failed: ' + err.message);
+      }
+    }
+
+    async function loadVpnConnections() {
+      try {
+        const res = await fetch('/api/vpn/connections');
+        const data = await res.json();
+        const list = document.getElementById('vpn-connections-list');
+        if (!data.connections || !data.connections.length) {
+          list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-network-wired"></i><p>No active VPN connections</p></div>';
+          return;
+        }
+        list.innerHTML = data.connections.map(c => `
+          <div class="strategy-item">
+            <div>
+              <span class="strategy-name">${c.name}</span>
+              <span class="tag tag-${c.status === 'connected' ? 'success' : 'warning'}" style="margin-left: 8px;">${c.status}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="strategy-stats">${c.remote_ip || 'N/A'}</span>
+              <button class="btn btn-secondary btn-sm vpn-disconnect-btn" data-name="${c.name}" style="padding: 4px 8px; font-size: 11px;">Disconnect</button>
+            </div>
+          </div>
+        `).join('');
+        list.querySelectorAll('.vpn-disconnect-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            if (!confirm(`Disconnect ${btn.dataset.name}?`)) return;
+            try {
+              await fetch(`/api/vpn/disconnect/${btn.dataset.name}`, { method: 'POST' });
+              loadVpnConnections();
+            } catch (err) {
+              alert('Disconnect failed: ' + err.message);
+            }
+          });
+        });
+      } catch (err) {
+        console.error('Failed to load VPN connections:', err);
+      }
+    }
+    }
+
+    // --- Parallel ---
+    document.getElementById('parallel-btn').addEventListener('click', async () => {
+      const task = document.getElementById('task-input').value.trim();
+      if (!task) return alert('Enter a task first.');
+      const selected = prompt('Enter agent names separated by commas (e.g. mitre/recon,owasp/injection):', 'mitre/recon,owasp/misconfig');
+      if (!selected) return;
+      const agents = selected.split(',').map(a => ({ agent: a.trim(), task }));
+      try {
+        const res = await fetch(API.workflowParallel, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ agents }),
+        });
+        const data = await res.json();
+        alert(`Parallel workflow launched: ${data.workflow_id}`);
+        loadRuns();
+      } catch (err) {
+        alert('Parallel workflow failed: ' + err.message);
+      }
+    });
+
+    // --- Chain ---
+    document.getElementById('chain-btn').addEventListener('click', async () => {
+      const target = prompt('Enter target (IP or domain):', '127.0.0.1');
+      if (!target) return;
+      const steps = [
+        { agent: 'mitre/recon', task: 'Full recon of {{target}} and save evidence.' },
+        { agent: 'web', task: 'Assess web services on {{target}} using evidence from {{previous_evidence}}.' },
+        { agent: 'exploit', task: 'Attempt controlled exploitation on {{target}} using evidence from {{previous_evidence}}.' },
+        { agent: 'report', task: 'Generate a full report from all evidence in {{previous_evidence}}.' },
+      ];
+      try {
+        const res = await fetch(API.workflowChain, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ steps, target }),
+        });
+        const data = await res.json();
+        alert(`Chain workflow launched: ${data.workflow_id}`);
+        loadRuns();
+      } catch (err) {
+        alert('Chain workflow failed: ' + err.message);
+      }
+    });
+
+    // --- Quick actions ---
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.action;
+        const taskInput = document.getElementById('task-input');
+        const agentSelect = document.getElementById('agent-select');
+        switch (action) {
+          case 'recon':
+            agentSelect.value = 'mitre/recon';
+            taskInput.value = 'Run a full recon on ';
+            break;
+          case 'web':
+            agentSelect.value = 'web';
+            taskInput.value = 'Run a web assessment on ';
+            break;
+          case 'bug-bounty':
+            agentSelect.value = 'bug-bounty';
+            taskInput.value = 'Run a full bug bounty on ';
+            break;
+          case 'parallel':
+            document.getElementById('parallel-btn').click();
+            return;
+        }
+        taskInput.focus();
+      });
+    });
+
+    // --- Tabs ---
+    // --- Professional Engines ---
+    function renderPre(id, data) {
+      const el = document.getElementById(id);
+      el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+    }
+
+    async function generatePlan() {
+      const target = document.getElementById('plan-target').value.trim();
+      const task = document.getElementById('plan-task').value.trim() || 'full assessment';
+      if (!target) { renderPre('plan-results', 'Enter a target'); return; }
+      renderPre('plan-results', 'Generating attack plan...');
+      try {
+        const res = await fetch('/api/planning/generate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target, task }),
+        });
+        const data = await res.json();
+        if (data.error) { renderPre('plan-results', 'Error: ' + data.error); return; }
+        const lines = [`Attack plan for ${data.target} (${data.target_type}) — risk: ${(data.threat_model || {}).risk_rating || 'n/a'}`, ''];
+        (data.phases || []).forEach((p, i) => {
+          lines.push(`${i + 1}. ${p.name} (~${p.estimated_time_minutes} min)`);
+          lines.push(`   tools: ${(p.tools || []).join(', ')}`);
+        });
+        renderPre('plan-results', lines.join('\n'));
+      } catch (e) { renderPre('plan-results', 'Error: ' + e.message); }
+    }
+
+    async function loadRunPlan() {
+      if (!currentRunId) { renderPre('plan-results', 'Select a run first'); return; }
+      renderPre('plan-results', 'Loading plan...');
+      try {
+        const res = await fetch(`/api/runs/${currentRunId}/plan`);
+        const data = await res.json();
+        renderPre('plan-results', data.plan_markdown || data.detail || 'No plan for this run');
+      } catch (e) { renderPre('plan-results', 'Error: ' + e.message); }
+    }
+
+    async function selectTools() {
+      const vuln = document.getElementById('toolsel-vuln').value;
+      renderPre('toolsel-results', 'Loading...');
+      try {
+        const res = await fetch(`/api/tools/select?vuln_type=${encodeURIComponent(vuln)}`);
+        renderPre('toolsel-results', await res.json());
+      } catch (e) { renderPre('toolsel-results', 'Error: ' + e.message); }
+    }
+
+    async function identifyChains() {
+      let findings;
+      try { findings = JSON.parse(document.getElementById('chains-findings').value); }
+      catch (e) { renderPre('chains-results', 'Invalid JSON: ' + e.message); return; }
+      renderPre('chains-results', 'Identifying chains...');
+      try {
+        const res = await fetch('/api/chains/identify', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ findings }),
+        });
+        renderPre('chains-results', await res.json());
+      } catch (e) { renderPre('chains-results', 'Error: ' + e.message); }
+    }
+
+    async function generateExploit() {
+      const vuln = document.getElementById('exploit-type').value;
+      const target = document.getElementById('exploit-target').value.trim();
+      const param = document.getElementById('exploit-param').value.trim() || 'id';
+      if (!target) { renderPre('exploit-results', 'Enter a target URL'); return; }
+      renderPre('exploit-results', 'Generating exploit...');
+      try {
+        const res = await fetch('/api/exploits/generate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ vuln_type: vuln, target, param }),
+        });
+        const data = await res.json();
+        renderPre('exploit-results', data.code || data);
+      } catch (e) { renderPre('exploit-results', 'Error: ' + e.message); }
+    }
+
+    async function generateReport() {
+      const target = document.getElementById('report-target').value.trim();
+      if (!target) { renderPre('report-results', 'Enter a target'); return; }
+      let findings = [];
+      const raw = document.getElementById('report-findings').value.trim();
+      if (raw) {
+        try { findings = JSON.parse(raw); }
+        catch (e) { renderPre('report-results', 'Invalid findings JSON: ' + e.message); return; }
+      }
+      renderPre('report-results', 'Generating report...');
+      try {
+        const res = await fetch('/api/reports/generate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target, findings }),
+        });
+        const data = await res.json();
+        if (data.error) { renderPre('report-results', 'Error: ' + data.error); return; }
+        renderPre('report-results', `Report: ${data.report_file}\nOverall risk: ${data.overall_risk}\nFindings: ${data.findings_count}\n\n${(data.report_content || '').slice(0, 4000)}`);
+      } catch (e) { renderPre('report-results', 'Error: ' + e.message); }
+    }
+
+    document.getElementById('plan-generate-btn').addEventListener('click', generatePlan);
+    document.getElementById('plan-load-run-btn').addEventListener('click', loadRunPlan);
+    document.getElementById('toolsel-btn').addEventListener('click', selectTools);
+    document.getElementById('chains-btn').addEventListener('click', identifyChains);
+    document.getElementById('exploit-generate-btn').addEventListener('click', generateExploit);
+    document.getElementById('report-generate-btn').addEventListener('click', generateReport);
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
+
+    // --- Start ---
+    init();
+  </script>
+</body>
+</html>

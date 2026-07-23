@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kali-ai — Figma Wireframe</title>
+  <style>
+    :root {
+      --bg-canvas: #1e1e2e;
+      --bg-panel: #2a2a3e;
+      --bg-card: #313145;
+      --bg-input: #3b3b52;
+      --border: #45455e;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #8b5cf6;
+      --accent-hover: #7c3aed;
+      --success: #22c55e;
+      --warning: #eab308;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --purple: #a855f7;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+    }
+    .figma-board {
+      display: grid;
+      grid-template-columns: 260px 1fr 320px;
+      height: 100vh;
+    }
+    /* Left sidebar - Layers */
+    .layers-panel {
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .panel-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .layer-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .layer-item:hover, .layer-item.active {
+      background: var(--bg-card);
+      color: var(--text);
+    }
+    .layer-icon {
+      width: 16px;
+      height: 16px;
+      opacity: 0.7;
+    }
+    .layer-indent { margin-left: 20px; }
+    /* Center canvas */
+    .canvas {
+      background: var(--bg-canvas);
+      padding: 24px;
+      overflow-y: auto;
+      position: relative;
+    }
+    .canvas-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .frame {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .frame-label {
+      position: absolute;
+      top: -18px;
+      left: 0;
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+    .frame-header {
+      background: var(--bg-panel);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .frame-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .frame-body {
+      padding: 16px;
+    }
+    /* Wireframe components */
+    .input-box {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      color: var(--text-dim);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-secondary {
+      background: var(--bg-input);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .tag-success { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+    .tag-warning { background: rgba(234, 179, 8, 0.2); color: var(--warning); }
+    .tag-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    .tag-info { background: rgba(59, 130, 246, 0.2); color: var(--info); }
+    .tag-purple { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
+    .stat-card {
+      background: var(--bg-input);
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .tool-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-input);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin: 2px;
+    }
+    .tool-chip.success { border-left: 3px solid var(--success); }
+    .tool-chip.failed { border-left: 3px solid var(--danger); }
+    .method-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg-input);
+      border-radius: 4px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .method-step-number {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .method-step.completed .method-step-number { background: var(--success); }
+    .method-step.active .method-step-number { background: var(--info); }
+    .method-step.pending .method-step-number { background: var(--text-dim); }
+    .evidence-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      background: var(--bg-input);
+      border-radius: 4px;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+    .evidence-icon {
+      width: 14px;
+      height: 14px;
+      opacity: 0.7;
+    }
+    .progress-bar {
+      height: 4px;
+      background: var(--bg-input);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .agent-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .agent-card:hover { border-color: var(--accent); }
+    .agent-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .agent-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-running { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .status-done { background: var(--info); }
+    .status-failed { background: var(--danger); }
+    .log-line {
+      font-family: ui-monospace, monospace;
+      font-size: 11px;
+      padding: 2px 0;
+      color: var(--text-muted);
+    }
+    .log-line.highlight { color: var(--text); background: rgba(139, 92, 246, 0.1); }
+    /* Right sidebar - Design specs */
+    .specs-panel {
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .color-swatch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .swatch-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .typography-sample {
+      margin-bottom: 12px;
+    }
+    .type-h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .type-h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .type-body { font-size: 13px; color: var(--text-muted); }
+    .type-mono { font-family: ui-monospace, monospace; font-size: 12px; }
+    .component-spec {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .component-name {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+    .annotation {
+      position: absolute;
+      background: var(--accent);
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      z-index: 10;
+    }
+    .annotation-line {
+      position: absolute;
+      background: var(--accent);
+      opacity: 0.5;
+      z-index: 9;
+    }
+    /* Layout frames */
+    .layout-header { grid-column: 1 / -1; }
+    .layout-sidebar { grid-column: span 3; }
+    .layout-main { grid-column: span 9; }
+    .layout-full { grid-column: 1 / -1; }
+    .layout-half { grid-column: span 6; }
+    .layout-third { grid-column: span 4; }
+    .layout-two-thirds { grid-column: span 8; }
+    .scroll-thin::-webkit-scrollbar { width: 4px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div class="figma-board">
+    <!-- Left: Layers -->
+    <div class="layers-panel scroll-thin">
+      <div class="panel-title">Pages</div>
+      <div class="layer-item active"><span>🎯</span> Bug Bounty Dashboard</div>
+      <div class="layer-item"><span>🧠</span> Memory & Evolution</div>
+      <div class="layer-item"><span>📊</span> Reports</div>
+      <div class="layer-item"><span>⚙️</span> Settings</div>
+
+      <div class="panel-title" style="margin-top: 24px;">Components</div>
+      <div class="layer-item"><span>📝</span> Task Input</div>
+      <div class="layer-item layer-indent"><span>🔘</span> Launch Button</div>
+      <div class="layer-item layer-indent"><span>🏷️</span> Agent Selector</div>
+      <div class="layer-item layer-indent"><span>📋</span> Workflow Templates</div>
+      <div class="layer-item"><span>📈</span> Stats Cards</div>
+      <div class="layer-item"><span>🔧</span> Tool Chips</div>
+      <div class="layer-item"><span>📋</span> Method Steps</div>
+      <div class="layer-item"><span>📁</span> Evidence List</div>
+      <div class="layer-item"><span>🤖</span> Agent Cards</div>
+      <div class="layer-item"><span>📜</span> Live Log Viewer</div>
+      <div class="layer-item"><span>🧬</span> Evolution Panel</div>
+      <div class="layer-item"><span>🔍</span> RAG Search</div>
+
+      <div class="panel-title" style="margin-top: 24px;">Assets</div>
+      <div class="layer-item"><span>🎨</span> Color Palette</div>
+      <div class="layer-item"><span>🔤</span> Typography</div>
+      <div class="layer-item"><span>📐</span> Icons</div>
+      <div class="layer-item"><span>🖼️</span> Illustrations</div>
+    </div>
+
+    <!-- Center: Canvas -->
+    <div class="canvas scroll-thin">
+      <div class="canvas-grid">
+
+        <!-- Header -->
+        <div class="frame layout-header" style="height: 64px; margin-bottom: 24px;">
+          <div class="frame-label">Header / Navigation</div>
+          <div class="frame-header" style="height: 100%;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 20px;">🎯</span>
+              <span class="frame-title">kali-ai bug bounty platform</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px; font-size: 12px;">
+              <span><span class="status-dot status-running"></span>ZAP: on</span>
+              <span><span class="status-dot status-done"></span>Qdrant: on</span>
+              <span><span class="status-dot status-running"></span>DVWA: up</span>
+              <span style="color: var(--text-muted);">SSE: live</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Task Input -->
+        <div class="frame layout-full" style="margin-bottom: 24px;">
+          <div class="frame-label">Task Input / Launch Panel</div>
+          <div class="frame-body">
+            <div style="display: grid; grid-template-columns: 1fr 200px 120px; gap: 12px; margin-bottom: 12px;">
+              <div class="input-box">Describe your authorized target and what to do... (e.g. "Run a full bug bounty on http://dvwa with admin/password")</div>
+              <div class="input-box" style="margin-bottom: 0;">Agent: bug-bounty</div>
+              <button class="btn btn-primary">Launch →</button>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span class="tag tag-purple">bug-bounty</span>
+              <span class="tag tag-info">recon</span>
+              <span class="tag tag-info">web</span>
+              <span class="tag tag-info">owasp/injection</span>
+              <span class="tag tag-info">owasp/misconfig</span>
+              <span class="tag tag-warning">mitre/recon</span>
+              <span class="tag tag-warning">mitre/post-exploit</span>
+              <span class="tag tag-success">report</span>
+              <span class="tag tag-success">curator</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workflow Templates -->
+        <div class="frame layout-full" style="margin-bottom: 24px;">
+          <div class="frame-label">Workflow Templates</div>
+          <div class="frame-body">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+              <div class="agent-card">
+                <div class="agent-name">🔍 Recon Only</div>
+                <div class="agent-desc">mitre/recon → report</div>
+              </div>
+              <div class="agent-card">
+                <div class="agent-name">🌐 Web Assessment</div>
+                <div class="agent-desc">recon → web → owasp → report</div>
+              </div>
+              <div class="agent-card">
+                <div class="agent-name">🎯 Full Bug Bounty</div>
+                <div class="agent-desc">recon → zap → scan → exploit → report</div>
+              </div>
+              <div class="agent-card">
+                <div class="agent-name">⚡ Parallel Scan</div>
+                <div class="agent-desc">recon + web + owasp simultaneously</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="frame layout-full" style="margin-bottom: 24px;">
+          <div class="frame-label">Key Metrics</div>
+          <div class="frame-body">
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
+              <div class="stat-card">
+                <div class="stat-value" style="color: var(--accent);">12</div>
+                <div class="stat-label">Total Runs</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" style="color: var(--success);">100%</div>
+                <div class="stat-label">Success Rate</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" style="color: var(--info);">8</div>
+                <div class="stat-label">Scenarios</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" style="color: var(--purple);">45</div>
+                <div class="stat-label">Tools Used</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" style="color: var(--warning);">3</div>
+                <div class="stat-label">Active Workflows</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" style="color: var(--danger);">2</div>
+                <div class="stat-label">Pending Review</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content: Left Sidebar + Right Main -->
+        <div class="frame layout-sidebar" style="height: 600px;">
+          <div class="frame-label">Agent Runs / Workflows</div>
+          <div class="frame-body scroll-thin" style="height: 100%; overflow-y: auto;">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">ACTIVE RUNS</div>
+
+            <div class="agent-card" style="border-left: 3px solid var(--success);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span class="agent-name">bug-bounty</span>
+                <span class="tag tag-success">done</span>
+              </div>
+              <div class="agent-desc">Run a full bug bounty on http://dvwa</div>
+              <div style="font-size: 10px; color: var(--text-dim); margin-top: 4px;">k3 · 20260721_092957_7ac4121b</div>
+            </div>
+
+            <div class="agent-card" style="border-left: 3px solid var(--info);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span class="agent-name">mitre/recon</span>
+                <span class="tag tag-info">running</span>
+              </div>
+              <div class="agent-desc">Quick TCP top-5 scan of 127.0.0.1</div>
+              <div style="font-size: 10px; color: var(--text-dim); margin-top: 4px;">k3 · 20260721_101433_be88ef80</div>
+            </div>
+
+            <div class="agent-card" style="border-left: 3px solid var(--warning);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span class="agent-name">owasp/injection</span>
+                <span class="tag tag-warning">queued</span>
+              </div>
+              <div class="agent-desc">Check for SQLi on http://dvwa/vulnerabilities/sqli/</div>
+              <div style="font-size: 10px; color: var(--text-dim); margin-top: 4px;">k3 · 20260721_101500_a1b2c3d4</div>
+            </div>
+
+            <div style="font-size: 11px; color: var(--text-muted); margin: 16px 0 8px;">COMPLETED</div>
+
+            <div class="agent-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span class="agent-name">bug-bounty</span>
+                <span class="tag tag-success">done</span>
+              </div>
+              <div class="agent-desc">Quick bug bounty scan on https://example.com</div>
+              <div style="font-size: 10px; color: var(--text-dim); margin-top: 4px;">k3 · 20260721_073650_84707355</div>
+            </div>
+
+            <div class="agent-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span class="agent-name">research/cve-lookup</span>
+                <span class="tag tag-success">done</span>
+              </div>
+              <div class="agent-desc">Look up CVE-2021-44228 (Log4Shell)</div>
+              <div style="font-size: 10px; color: var(--text-dim); margin-top: 4px;">k3 · 20260721_055802_77f12624</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="frame layout-main" style="height: 600px;">
+          <div class="frame-label">Live Output / Methodology / Tools</div>
+          <div class="frame-body" style="height: 100%; display: flex; flex-direction: column;">
+
+            <!-- Methodology Steps -->
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">METHODOLOGY</div>
+              <div class="method-step completed">
+                <div class="method-step-number">✓</div>
+                <div>
+                  <div style="font-weight: 600;">1. Reconnaissance</div>
+                  <div style="font-size: 10px; color: var(--text-muted);">DNS, WHOIS, port scan, web fingerprinting</div>
+                </div>
+              </div>
+              <div class="method-step completed">
+                <div class="method-step-number">✓</div>
+                <div>
+                  <div style="font-weight: 600;">2. ZAP Baseline</div>
+                  <div style="font-size: 10px; color: var(--text-muted);">Traditional spider + AJAX spider + passive scan</div>
+                </div>
+              </div>
+              <div class="method-step active">
+                <div class="method-step-number">3</div>
+                <div>
+                  <div style="font-weight: 600;">3. Targeted Scanning</div>
+                  <div style="font-size: 10px; color: var(--text-muted);">sqlmap, nuclei, ffuf, nikto on discovered endpoints</div>
+                </div>
+              </div>
+              <div class="method-step pending">
+                <div class="method-step-number">4</div>
+                <div>
+                  <div style="font-weight: 600;">4. Controlled Exploitation</div>
+                  <div style="font-size: 10px; color: var(--text-muted);">Safe PoC for confirmed vulnerabilities</div>
+                </div>
+              </div>
+              <div class="method-step pending">
+                <div class="method-step-number">5</div>
+                <div>
+                  <div style="font-weight: 600;">5. Reporting</div>
+                  <div style="font-size: 10px; color: var(--text-muted);">OWASP Top 10 classification, severity, evidence, remediation</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tools Used -->
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">TOOLS USED</div>
+              <div>
+                <span class="tool-chip success">zap</span>
+                <span class="tool-chip success">curl</span>
+                <span class="tool-chip success">gobuster</span>
+                <span class="tool-chip success">nuclei</span>
+                <span class="tool-chip success">whatweb</span>
+                <span class="tool-chip success">python3</span>
+                <span class="tool-chip success">httpie</span>
+                <span class="tool-chip success">jq</span>
+                <span class="tool-chip success">subfinder</span>
+                <span class="tool-chip failed">nmap</span>
+                <span class="tool-chip failed">masscan</span>
+                <span class="tool-chip failed">sqlmap</span>
+                <span class="tool-chip failed">ffuf</span>
+              </div>
+            </div>
+
+            <!-- Live Log -->
+            <div style="flex: 1; display: flex; flex-direction: column;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-size: 11px; color: var(--text-muted);">LIVE LOG</div>
+                <div style="font-size: 10px; color: var(--text-dim);">run_id: 20260721_092957_7ac4121b</div>
+              </div>
+              <div style="flex: 1; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; padding: 12px; overflow-y: auto;" class="scroll-thin">
+                <div class="log-line">==> Agent: bug-bounty</div>
+                <div class="log-line">==> Model: k3</div>
+                <div class="log-line">==> Task: Run a full bug bounty on http://dvwa</div>
+                <div class="log-line">==> Run ID: 20260721_092957_7ac4121b</div>
+                <div class="log-line">==> Started: 2026-07-21T09:29:57+00:00</div>
+                <div class="log-line">==> Lessons injected: 3</div>
+                <div class="log-line">==> Installing missing tools...</div>
+                <div class="log-line highlight">Agent: bug-bounty</div>
+                <div class="log-line highlight">  Available: 18</div>
+                <div class="log-line highlight">  Missing: 3</div>
+                <div class="log-line highlight">  Missing tools: dalfox, ssrfmap, gopherus</div>
+                <div class="log-line highlight">  Installed: subfinder, dirsearch, nuclei, xsstrike, zaproxy, burpsuite, chromium, selenium, jq, httpie</div>
+                <div class="log-line">==> Tools ready: 18 available, 13 missing</div>
+                <div class="log-line"></div>
+                <div class="log-line">┌─ Reasoning ──────────────────────────────────────────────────────┐</div>
+                <div class="log-line">Target is dvwa -> 172.22.0.9, only port 80 open. Tech: Apache/2.4.25, PHP, DVWA v1.10.</div>
+                <div class="log-line">Cookies set at login: PHPSESSID (no HttpOnly/Secure) and security=low.</div>
+                <div class="log-line">nmap blocked in container; fell back to bash /dev/tcp probe.</div>
+                <div class="log-line"></div>
+                <div class="log-line">ZAP spider: 72 URLs discovered — all vulnerability modules (brute, exec, csrf, fi, sqli, sqli_blind, upload, xss_r, xss_s, captcha, csp, weak_id).</div>
+                <div class="log-line">Passive scan: 100 alerts. Medium: CSP header not set (21), Missing anti-clickjacking (19), Absence of anti-CSRF tokens (5).</div>
+                <div class="log-line">Low: Server version disclosure (27), X-Content-Type-Options missing (21).</div>
+                <div class="log-line"></div>
+                <div class="log-line">gobuster found: /config/ (301), /docs/, /external/, php.ini (200!), robots.txt, .htaccess (403).</div>
+                <div class="log-line">nuclei found nothing on root. sqlmap and ffuf are blocked in this environment.</div>
+                <div class="log-line"></div>
+                <div class="log-line">Reached maximum iterations (30). Requesting summary...</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Evidence / What Worked -->
+        <div class="frame layout-third" style="margin-top: 24px;">
+          <div class="frame-label">Evidence / What Worked</div>
+          <div class="frame-body scroll-thin" style="max-height: 300px; overflow-y: auto;">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">EVIDENCE CAPTURED</div>
+            <div class="evidence-item">
+              <span class="evidence-icon">📄</span>
+              <span>/work/loot/dvwa/zap/alerts_baseline.json</span>
+              <span class="tag tag-info" style="margin-left: auto;">233 KB</span>
+            </div>
+            <div class="evidence-item">
+              <span class="evidence-icon">📄</span>
+              <span>/work/loot/dvwa/zap/urls_traditional.txt</span>
+              <span class="tag tag-info" style="margin-left: auto;">2.4 KB</span>
+            </div>
+            <div class="evidence-item">
+              <span class="evidence-icon">📄</span>
+              <span>/work/loot/dvwa/scans/gobuster_dirs.txt</span>
+              <span class="tag tag-info" style="margin-left: auto;">670 B</span>
+            </div>
+            <div class="evidence-item">
+              <span class="evidence-icon">📄</span>
+              <span>/work/loot/dvwa/recon/whatweb.txt</span>
+              <span class="tag tag-info" style="margin-left: auto;">866 B</span>
+            </div>
+            <div class="evidence-item">
+              <span class="evidence-icon">📄</span>
+              <span>/work/loot/dvwa/cookies.txt</span>
+              <span class="tag tag-info" style="margin-left: auto;">223 B</span>
+            </div>
+            <div class="evidence-item">
+              <span class="evidence-icon">🐍</span>
+              <span>/work/loot/dvwa/zap/zap_auth_setup.py</span>
+              <span class="tag tag-info" style="margin-left: auto;">1.3 KB</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Self-Evolution Status -->
+        <div class="frame layout-third" style="margin-top: 24px;">
+          <div class="frame-label">Self-Evolution Status</div>
+          <div class="frame-body">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">STRATEGY MEMORY</div>
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                <span>mitre:recon</span>
+                <span class="tag tag-success">100% · conf 1.0</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                <span>web-app:sql-injection</span>
+                <span class="tag tag-info">100% · conf 1.0</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                <span>web-app:misconfig</span>
+                <span class="tag tag-info">100% · conf 1.0</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                <span>bug-bounty</span>
+                <span class="tag tag-warning">50% · conf 0.5</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
+            </div>
+            <div style="font-size: 10px; color: var(--text-dim); margin-top: 8px;">
+              8 scenarios · 4 targets · 8 high-confidence
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="frame layout-third" style="margin-top: 24px;">
+          <div class="frame-label">Suggested Next Steps</div>
+          <div class="frame-body">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">RECOMMENDED AGENTS</div>
+            <div class="agent-card" style="margin-bottom: 6px;">
+              <div class="agent-name">owasp/injection</div>
+              <div class="agent-desc">Confirm SQLi, XSS, command injection on DVWA modules</div>
+            </div>
+            <div class="agent-card" style="margin-bottom: 6px;">
+              <div class="agent-name">exploit</div>
+              <div class="agent-desc">Run safe PoCs for confirmed vulnerabilities</div>
+            </div>
+            <div class="agent-card" style="margin-bottom: 6px;">
+              <div class="agent-name">report</div>
+              <div class="agent-desc">Generate final bug bounty report with evidence</div>
+            </div>
+            <div style="font-size: 10px; color: var(--text-dim); margin-top: 8px;">
+              Based on scenario: web-app:sql-injection (100% success, conf 1.0)
+            </div>
+          </div>
+        </div>
+
+        <!-- Annotation -->
+        <div class="annotation" style="top: 120px; right: 340px;">Task input with agent selector + workflow templates</div>
+        <div class="annotation" style="top: 280px; left: 300px;">Real-time metrics from all runs</div>
+        <div class="annotation" style="top: 400px; left: 20px;">Active runs with status tracking</div>
+        <div class="annotation" style="top: 400px; left: 300px;">Methodology steps + tools used + live log</div>
+        <div class="annotation" style="top: 700px; left: 20px;">Evidence captured with file sizes</div>
+        <div class="annotation" style="top: 700px; left: 300px;">Self-evolution strategy memory with confidence</div>
+        <div class="annotation" style="top: 700px; left: 580px;">Next steps suggested by evolution engine</div>
+
+      </div>
+    </div>
+
+    <!-- Right: Design Specs -->
+    <div class="specs-panel scroll-thin">
+      <div class="panel-title">Design System</div>
+
+      <div class="component-spec">
+        <div class="component-name">Color Palette</div>
+        <div class="color-swatch"><div class="swatch" style="background: #1e1e2e;"></div><span class="swatch-label">bg-canvas</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #2a2a3e;"></div><span class="swatch-label">bg-panel</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #313145;"></div><span class="swatch-label">bg-card</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #3b3b52;"></div><span class="swatch-label">bg-input</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #45455e;"></div><span class="swatch-label">border</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #8b5cf6;"></div><span class="swatch-label">accent</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #22c55e;"></div><span class="swatch-label">success</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #eab308;"></div><span class="swatch-label">warning</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #ef4444;"></div><span class="swatch-label">danger</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #3b82f6;"></div><span class="swatch-label">info</span></div>
+        <div class="color-swatch"><div class="swatch" style="background: #a855f7;"></div><span class="swatch-label">purple</span></div>
+      </div>
+
+      <div class="component-spec">
+        <div class="component-name">Typography</div>
+        <div class="typography-sample">
+          <div class="type-h1">Heading 1 / 24px</div>
+          <div class="type-h2">Heading 2 / 18px</div>
+          <div class="type-body">Body text / 13px / regular</div>
+          <div class="type-mono">Monospace / 12px / logs</div>
+        </div>
+      </div>
+
+      <div class="component-spec">
+        <div class="component-name">Components</div>
+        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">
+          • Task Input Box<br>
+          • Agent Selector Chips<br>
+          • Workflow Template Cards<br>
+          • Stat Cards (6 variants)<br>
+          • Agent Run Cards (active/completed)<br>
+          • Methodology Stepper<br>
+          • Tool Chips (success/failed)<br>
+          • Live Log Viewer<br>
+          • Evidence List Items<br>
+          • Progress Bars<br>
+          • Status Indicators<br>
+          • Next Step Cards
+        </div>
+      </div>
+
+      <div class="component-spec">
+        <div class="component-name">Interactions</div>
+        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">
+          • Click agent run → load log + stream<br>
+          • Click tool chip → show tool details<br>
+          • Click evidence → view file content<br>
+          • Click next step → launch suggested agent<br>
+          • Hover stat card → show breakdown<br>
+          • Real-time SSE log streaming<br>
+          • Auto-refresh every 3s (runs) / 30s (evolution)
+        </div>
+      </div>
+
+      <div class="component-spec">
+        <div class="component-name">Responsive</div>
+        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">
+          • Desktop: 3-column layout<br>
+          • Tablet: 2-column layout<br>
+          • Mobile: single column, collapsible sidebar<br>
+          • Touch-friendly tap targets (min 44px)
+        </div>
+      </div>
+
+      <div class="component-spec">
+        <div class="component-name">Accessibility</div>
+        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">
+          • ARIA labels on all interactive elements<br>
+          • Keyboard navigation (Tab, Enter, Esc)<br>
+          • High contrast mode support<br>
+          • Screen reader friendly log viewer<br>
+          • Focus indicators on all focusable elements
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
