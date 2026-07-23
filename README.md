@@ -22,6 +22,34 @@
 
 ---
 
+## 🏛️ The ANVE Security Intelligence Platform Vision
+
+`anve-offsec` is the foundational offensive security pillar of the broader **ANVE Security Intelligence Platform**—an ecosystem designed to unify offensive testing, defensive operations, code security, and continuous validation:
+
+```text
+                     ┌─────────────────────────────────────────┐
+                     │   ANVE Security Intelligence Platform   │
+                     └────────────────────┬────────────────────┘
+                                          │
+        ┌────────────────┬────────────────┼────────────────┬────────────────┐
+        │                │                │                │                │
+        ▼                ▼                ▼                ▼                ▼
+  ┌───────────┐    ┌───────────┐    ┌───────────┐    ┌───────────┐    ┌──────────────┐
+  │ANVE OffSec│    │ANVE CodeSec│   │ANVE CloudSec│  │ ANVE SOC  │    │ANVE Attack   │
+  │Offensive  │    │AI Code    │    │Cloud      │    │AI Security│    │Simulator     │
+  │Security   │    │Review     │    │Security   │    │Operations │    │Continuous    │
+  │[LIVE NOW] │    │[Roadmap]  │    │[Roadmap]  │    │[Roadmap]  │    │Validation    │
+  └───────────┘    └───────────┘    └───────────┘    └───────────┘    └──────────────┘
+```
+
+- 🛡️ **ANVE OffSec** *(Live)*: Autonomous offensive security, browser exploration, and evidence-backed vulnerability assessment inside Kali Linux.
+- 💻 **ANVE CodeSec** *(Roadmap)*: AI-powered static code review and SAST logic flaw detection in CI/CD pipelines.
+- ☁️ **ANVE CloudSec** *(Roadmap)*: Autonomous cloud infrastructure auditing across AWS, GCP, and Azure posture configurations.
+- 🚨 **ANVE SOC** *(Roadmap)*: AI security operations agent for automated log triage, incident response, and threat correlation.
+- 🎯 **ANVE Attack Simulator** *(Roadmap)*: Continuous breach and attack simulation (BAS) for automated defense validation.
+
+---
+
 ## ⚡ What `anve-offsec` Does
 
 **`anve-offsec`** is an open-source, autonomous AI security engineering platform **proudly engineered in India 🇮🇳**. Designed for security teams, researchers, and bug bounty operators, it delivers three primary outcomes:
@@ -248,17 +276,18 @@ Every engagement outcome is processed, embedded, and stored in **Qdrant Vector D
 
 ---
 
-## 🗺️ Project Roadmap
+## 🗺️ Project & Platform Roadmap
 
-- [x] **Multi-Agent Architecture**: Stateful Hermes AI Reasoning Brain + OpenClaw headless Chromium browser sidecar.
+- [x] **ANVE OffSec (Core Engine)**: Stateful Hermes AI Reasoning Brain + OpenClaw headless Chromium browser sidecar.
 - [x] **Self-Evolution Engine**: Qdrant vector RAG memory for continuous strategy learning across target runs.
 - [x] **Real-Time Control Plane**: FastAPI web dashboard featuring real-time SSE streaming & mid-run operator steering.
 - [x] **Defensive Guardrails**: Prompt injection interception, destructive command blocking, and legal scope auditing.
-- [ ] **v1.5: Plug & Play Appliance System**: Zero-config auto-discovery of local network targets, pre-baked environment defaults, and hardware acceleration (Apple Silicon Metal / NVIDIA CUDA).
+- [ ] **ANVE CodeSec Expansion**: AI static code analyzer and SAST logic flaw detection module for GitHub Actions / GitLab CI.
+- [ ] **ANVE CloudSec Expansion**: Autonomous cloud configuration auditing agent across AWS IAM, GCP IAM, and Azure KeyVault.
+- [ ] **ANVE SOC Expansion**: AI-driven log triage, SIEM threat correlation, and automated incident response playbook runner.
+- [ ] **ANVE Attack Simulator**: Continuous breach & attack simulation (BAS) module for automated security posture validation.
 - [ ] **v2.0: Full AI OS Based GUI VM (Kali Native)**: Standalone Kali Linux ISO & OVA virtual machine appliance with built-in AI desktop control plane, QEMU/VMware snapshot rollback, and GUI assistant windows.
 - [ ] **v2.5: One-Click Cloud Deployment**: 1-click Cloud launcher scripts & Terraform/Helm templates for AWS AMI, GCP Marketplace, DigitalOcean Droplet, and Azure.
-- [ ] **v3.0: Distributed Swarm Worker Nodes**: Distributed agent worker nodes with mutual-TLS dind worker isolation across multi-region cloud providers.
-- [ ] **v3.5: Enterprise Executive Reporting**: Automated PDF & HTML executive report synthesis with custom branding and visual PoC diffs.
 
 ---
 
