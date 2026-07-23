@@ -1,4 +1,4 @@
-# kali-ai — System Architecture (reference spec)
+# anve-offsec — System Architecture (reference spec)
 
 ## Layers
 

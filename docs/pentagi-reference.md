@@ -1,6 +1,6 @@
 # PentAGI — Architecture Reference
 
-Reference notes on [vxcontrol/pentagi](https://github.com/vxcontrol/pentagi) (MIT license, Go 1.24 backend + React/TS frontend), researched 2026-07-20. Use as design input for kali-ai's orchestrator, tool layer, memory, and sandboxing. PentAGI is the closest mature open-source analogue to this project — study it before reinventing mechanisms it already solved.
+Reference notes on [vxcontrol/pentagi](https://github.com/vxcontrol/pentagi) (MIT license, Go 1.24 backend + React/TS frontend), researched 2026-07-20. Use as design input for anve-offsec's orchestrator, tool layer, memory, and sandboxing. PentAGI is the closest mature open-source analogue to this project — study it before reinventing mechanisms it already solved.
 
 ## 1. What it is
 
@@ -71,7 +71,7 @@ Reference notes on [vxcontrol/pentagi](https://github.com/vxcontrol/pentagi) (MI
 - No JSON report export (web/clipboard/MD/PDF only). MCP not exposed in UI.
 - Deleting a flow leaves `flow-{id}-data/` on disk.
 
-## 10. Decisions to borrow for kali-ai
+## 10. Decisions to borrow for anve-offsec
 
 1. Flow→Task→SubTask→Action relational model with `agent_type` — queryable, reportable.
 2. Two-tier agent budgets + Reflector on repeated failures — cheap always-on runaway protection.

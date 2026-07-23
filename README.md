@@ -1,4 +1,4 @@
-# 🛡️ kali-ai: Autonomous Bug Bounty & Offensive Security Platform
+# 🛡️ anve-offsec: Autonomous Bug Bounty & Offensive Security Platform
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docker](https://img.shields.io/badge/Docker-24.0+-0db7ed.svg?logo=docker&logoColor=white)](https://www.docker.com/)
@@ -7,7 +7,7 @@
 [![OpenClaw](https://img.shields.io/badge/Browser-OpenClaw_Sidecar-FF4500.svg)](https://openclaw.ai)
 [![Qdrant](https://img.shields.io/badge/Memory-Qdrant_Vector_RAG-red.svg?logo=qdrant&logoColor=white)](https://qdrant.tech/)
 
-> **kali-ai** is an enterprise-grade, autonomous bug bounty and offensive-security operations platform. It combines a stateful **Kali Linux core container**, the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium automation**, **OWASP ZAP vulnerability scanning**, and **Qdrant RAG memory** into a unified, self-evolving system.
+> **anve-offsec** is an enterprise-grade, autonomous bug bounty and offensive-security operations platform. It combines a stateful **Kali Linux core container**, the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium automation**, **OWASP ZAP vulnerability scanning**, and **Qdrant RAG memory** into a unified, self-evolving system.
 
 ---
 
@@ -56,8 +56,8 @@ graph TD
 ### 1. Clone & Set Up Environment
 
 ```bash
-git clone https://github.com/ANVEAI/kali-ai.git
-cd kali-ai
+git clone https://github.com/ANVEAI/anve-offsec.git
+cd anve-offsec
 
 # Copy environment configuration
 cp .env.example .env
@@ -114,7 +114,7 @@ Want direct terminal interaction with the Hermes AI agent inside Kali?
 
 ## 🔒 Authorization & Ethical Safeguards
 
-`kali-ai` incorporates strict governance controls to prevent unauthorized testing:
+`anve-offsec` incorporates strict governance controls to prevent unauthorized testing:
 
 - **Target Whitelisting (`config/authorized-targets.json`)**: Enforces explicit authorization categories:
   - `lab`: Local Docker targets (`127.0.0.1`, `dvwa`, `metasploitable2`).
@@ -142,7 +142,7 @@ Key tunables can be configured inside `.env`:
 
 ## ⚠️ Legal Disclaimer
 
-> **IMPORTANT**: `kali-ai` is built strictly for authorized security assessments, penetration testing within explicit scope, educational research, and bug bounty hunting. Operating this software against targets without explicit written authorization is illegal. The creators and contributors assume no liability for misuse or damage caused by this platform.
+> **IMPORTANT**: `anve-offsec` is built strictly for authorized security assessments, penetration testing within explicit scope, educational research, and bug bounty hunting. Operating this software against targets without explicit written authorization is illegal. The creators and contributors assume no liability for misuse or damage caused by this platform.
 
 ---
 

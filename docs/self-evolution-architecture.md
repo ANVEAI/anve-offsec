@@ -1,8 +1,8 @@
-# kali-ai Self-Evolution Architecture
+# anve-offsec Self-Evolution Architecture
 
 ## Overview
 
-kali-ai is designed to be a continuously learning and evolving offensive-security platform. It doesn't just execute tasks — it learns from every action, identifies what works in each scenario, updates its own strategies, and suggests next steps based on accumulated experience.
+anve-offsec is designed to be a continuously learning and evolving offensive-security platform. It doesn't just execute tasks — it learns from every action, identifies what works in each scenario, updates its own strategies, and suggests next steps based on accumulated experience.
 
 ## Core Components
 
