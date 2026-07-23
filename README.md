@@ -12,6 +12,19 @@
 
 ---
 
+## 📚 Multipage Technical Documentation Index
+
+Explore the detailed sub-documentation pages for deep technical specifications:
+
+- 🏗️ **[Architecture & Microservice Spec](docs/ARCHITECTURE.md)** — Sidecar isolation, Docker-in-Docker worker spawning, and out-of-band listener ports (`28000–30000`).
+- 🧠 **[Hermes AI Reasoning Brain](docs/HERMES_BRAIN.md)** — Multi-turn session persistence (`--resume`), persona hierarchy across 40+ agents, and phase completion signaling.
+- 🧬 **[Self-Evolution & Vector RAG](docs/SELF_EVOLUTION.md)** — Qdrant vector memory indexing, confidence score heuristics (`0.7`/`0.85`), and strategy prompt injection.
+- 🛡️ **[Defensive Guardrails & Security](docs/GUARDRAILS_SECURITY.md)** — Prompt injection checking, destructive command prevention, exfiltration filtering, and legal scope auditing.
+- 🔬 **[Benchmark Case Studies](docs/CASE_STUDIES.md)** — Detailed execution logs & reports for DVWA OWASP Top 10, Metasploitable2, and Auth Wall OpenClaw bypass.
+- 🤝 **[Contribution Guidelines](docs/CONTRIBUTING.md)** — How to add new specialized agents, tools, and submit pull requests.
+
+---
+
 ## 📸 Key Capabilities at a Glance
 
 - ⏳ **Long-Running Autonomous Engagements**: Executes multi-phase pentests over hours or days with zero context loss and crash-safe state retention.
@@ -22,41 +35,6 @@
 - 🛡️ **Defensive Guardrails & Scope Control**: Input/output protection against prompt injection, destructive shell commands, and out-of-scope testing with audit logs.
 - 📊 **Real-Time Control Plane**: Modern FastAPI web interface featuring live Server-Sent Events (SSE) logs, real-time operator instruction injection, and instant run continuations.
 - 🧪 **Built-in Lab Environment**: Ships with pre-configured isolated targets (**DVWA** and **Metasploitable2**) for safe local benchmarking and vulnerability research.
-
----
-
-## 🧠 Deep Dive: The Hermes AI Reasoning Brain (`tools/engagement_runner.py`)
-
-At the core of **anve-offsec** is **Hermes**—a specialized AI reasoning agent acting as the lead security researcher inside the Kali Linux environment.
-
-```
-       +-------------------------------------------------------------------+
-       |                       Hermes AI Brain                             |
-       |  - Analyzes target recon & attack paths                           |
-       |  - Formulates phase-by-phase penetration strategy                 |
-       |  - Invokes terminal commands & custom exploit frameworks           |
-       |  - Maintains context via --resume <session_id> across phases       |
-       +-------------------+-----------------------------------------------+
-                           |
-            +--------------+--------------+
-            |                             |
-            v                             v
-+-----------------------+     +-----------------------+
-|  Specialized Agents   |     |  Self-Evolution RAG   |
-| - Bug Bounty Specialist|    | - Queries Qdrant DB   |
-| - OWASP Top 10 Experts|     | - Injects past lessons|
-| - MITRE ATT&CK Framework|   | - Optimizes strategy  |
-+-----------------------+     +-----------------------+
-```
-
-### Key Hermes Engineering Mechanics:
-1. **Multi-Turn Session Continuity**: Re-invokes Hermes with `--resume <session_id>` across turns, ensuring 100% of working context is preserved across multi-phase engagements.
-2. **Specialized Persona Hierarchy**: Over 40+ prompt configurations in `config/agents/` allow Hermes to dynamically assume specialized roles:
-   - **Core Roles**: `bug-bounty`, `recon`, `web`, `exploit`, `report`
-   - **OWASP Specialists**: `owasp/injection`, `owasp/auth`, `owasp/access-control`, `owasp/ssrf`, `owasp/crypto`, `owasp/misconfig`
-   - **MITRE ATT&CK**: `mitre/recon`, `mitre/initial-access`, `mitre/credential-access`, `mitre/privilege-escalation`, `mitre/lateral-movement`
-   - **Supervision & Safety**: `adviser` (loop detection), `reflector` (failure recovery), `barrier` (human-in-the-loop control)
-3. **Structured Phase Signaling**: Hermes outputs explicit regex tokens (`PHASE_COMPLETE: <name>` or `PHASE_BLOCKED: <name>`) to signal phase boundaries to the execution runner.
 
 ---
 
@@ -88,57 +66,6 @@ flowchart TD
 - **Adaptive 3-Attempt Retry Escalation**: When a phase fails, the runner escalates from standard tools $\rightarrow$ evasion parameters $\rightarrow$ custom Python exploits.
 - **Crash-Safe State Persistence**: Saves engagement state after every turn to `/work/dashboard-logs/<run_id>.engagement.json`. Resumes automatically on container or host restart.
 - **Live Mid-Run Operator Steering**: Inject instructions from the dashboard UI mid-engagement without interrupting LLM reasoning context.
-
----
-
-## 🧬 Self-Evolving Pentest Architecture (`tools/evolution_engine.py`)
-
-**anve-offsec** gets smarter with every target it tests. It builds an empirical strategy model stored in Qdrant vector memory:
-
-```
-                      +-----------------------------------+
-                      |      Completed Engagement Run     |
-                      +-----------------+-----------------+
-                                        |
-                                        v
-                      +-----------------------------------+
-                      |   Post-Run Evolution Engine       |
-                      |  - Extracts scenario & techniques |
-                      |  - Evaluates tool success rate    |
-                      +-----------------+-----------------+
-                                        |
-                                        v
-                      +-----------------------------------+
-                      |    Qdrant RAG Memory Index        |
-                      |  - Vector embeddings of strategies|
-                      |  - Scenario confidence scores     |
-                      +-----------------+-----------------+
-                                        |
-                                        v
-                      +-----------------------------------+
-                      |      Future Engagement Run        |
-                      |  - Injects past empirical lessons |
-                      |  - Prioritizes high-success tools |
-                      +-----------------------------------+
-```
-
-### Self-Evolution Highlights:
-1. **Scenario Classification**: Automatically categorizes target tasks into structured scenarios (`web-app:sql-injection`, `web-app:ssrf`, `api:idor`, `infra:ssh-enum`).
-2. **Confidence Thresholding**:
-   - `CONFIDENCE_THRESHOLD = 0.7`: RAG strategies above 70% confidence are injected into active prompts.
-   - `AUTO_PROMPT_UPDATE_THRESHOLD = 0.85`: Strategies above 85% confidence automatically update static agent prompts (`config/agents/*.prompt`).
-3. **Strategy Memory (`/work/memory/strategy.json`)**: Tracks real-world success rates, tool execution times, and common failure modes across runs.
-
----
-
-## 🛡️ Defensive Guardrails & Governance (`tools/guardrails.py`)
-
-`anve-offsec` provides comprehensive security controls to prevent unintended actions:
-
-- **Input Guardrails**: Protects against prompt injection by scanning for adversarial patterns (`ignore previous instructions`, `<system>`, `<root>`) and decoding base64 / unicode homograph obfuscations.
-- **Output Guardrails**: Intercepts dangerous terminal commands before execution inside Kali (`rm -rf /`, `mkfs`, fork bombs, system shutdown).
-- **Data Exfiltration Prevention**: Blocks attempts to read host credentials (`/etc/shadow`, `~/.ssh/id_rsa`, `~/.aws/credentials`, `~/.git-credentials`).
-- **Target Authorization Engine (`config/authorized-targets.json`)**: Enforces explicit legal scope checking (`lab`, `ctf`, `bug-bounty`, `self`, `client`). Unapproved target overrides require typed operator confirmation and are audited to `/work/memory/override-log.jsonl`.
 
 ---
 
@@ -175,42 +102,6 @@ graph TD
         Kali -. Authorized Testing .-> Meta[🧪 Metasploitable2 Target - :8081]
     end
 ```
-
-### Microservice Details:
-- **Docker Socket Access**: `kali` container mounts `/var/run/docker.sock` to spawn ephemeral sub-worker containers.
-- **Out-of-Band (OOB) Range (`28000–30000`)**: Port range reserved for reverse shells, DNS exfiltration, and out-of-band HTTP callbacks.
-
----
-
-## 🔬 Benchmark Case Studies
-
-### 📑 Case Study 1: Automated Assessment of Damn Vulnerable Web App (DVWA)
-- **Target**: Local DVWA container (`http://dvwa:8080`)
-- **Agent Assigned**: `bug-bounty` (Hermes Brain + OWASP Specialists)
-- **Execution Flow**:
-  1. Fingerprints PHP/Apache stack and maps endpoints.
-  2. Runs OWASP ZAP spider via API (`zap_client.py`) to discover `/vulnerabilities/sqli/`, `/vulnerabilities/exec/`, `/vulnerabilities/fi/`.
-  3. Verifies Command Injection (`127.0.0.1; id`), SQL Injection (`1' OR '1'='1`), and File Inclusion (`?page=include.php`).
-  4. Generates executive Markdown & JSON report in `/work/loot/dvwa_report.md`.
-- **Outcome**: 100% automated detection in under 8 minutes.
-
-### 📑 Case Study 2: Metasploitable2 Infrastructure & Service Enumeration
-- **Target**: Local Metasploitable2 container (`http://metasploitable2:8081`)
-- **Agent Assigned**: `recon` + `exploit`
-- **Execution Flow**:
-  1. Identifies open ports: 21 (VSFTPD 2.3.4), 22 (OpenSSH 4.7p1), 80 (Apache 2.2.8), 6667 (UnrealIRCd).
-  2. Queries local RAG knowledge base & CVE lookup tools for VSFTPD 2.3.4 backdoor exploit paths.
-  3. Synthesizes custom Python exploit script (`/tools/exploit_framework.py`) to verify backdoor reactivity.
-- **Outcome**: Identified 6 exploit paths and generated executive summary report.
-
-### 📑 Case Study 3: Auth Wall Bypass & Dynamic Session Automation
-- **Target**: Protected Client Staging Web Application
-- **Agent Assigned**: `auth-wall` + OpenClaw Browser Sidecar
-- **Execution Flow**:
-  1. OpenClaw launches headless Chromium and completes dynamic login form.
-  2. Extracts JWT Bearer token & session cookies, passing them to Hermes inside Kali.
-  3. Hermes performs authenticated IDOR (`idor_scanner.py`) and API security testing (`api_tester.py`).
-- **Outcome**: Discovered broken object-level authorization (BOLA) on user profile endpoints.
 
 ---
 
