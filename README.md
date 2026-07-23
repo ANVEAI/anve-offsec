@@ -287,7 +287,15 @@ Every engagement outcome is processed, embedded, and stored in **Qdrant Vector D
 - [ ] **ANVE SOC Expansion**: AI-driven log triage, SIEM threat correlation, and automated incident response playbook runner.
 - [ ] **ANVE Attack Simulator**: Continuous breach & attack simulation (BAS) module for automated security posture validation.
 - [ ] **v2.0: Full AI OS Based GUI VM (Kali Native)**: Standalone Kali Linux ISO & OVA virtual machine appliance with built-in AI desktop control plane, QEMU/VMware snapshot rollback, and GUI assistant windows.
-- [ ] **v2.5: One-Click Cloud Deployment**: 1-click Cloud launcher scripts & Terraform/Helm templates for AWS AMI, GCP Marketplace, DigitalOcean Droplet, and Azure.
+## 💖 Acknowledgements & Standing on the Shoulders of Giants
+
+`anve-offsec` is proudly built on top of pioneering open-source research and tools created by the global AI and security community:
+
+- 🧠 **[Nous Research](https://github.com/NousResearch)** — Creators of the **Hermes** model series and agent reasoning paradigms that power our stateful CLI reasoning brain (`hermes chat`).
+- 🛡️ **[PentAGI](https://github.com/pentagi/pentagi)** — Pioneers in autonomous pentesting agent architectures and AI-driven security workflows.
+- 🌐 **[OpenClaw](https://github.com/openclaw/openclaw)** — Creators of the isolated headless Chromium gateway for automated DOM crawling and authentication flows.
+- ⚡ **[Qdrant](https://github.com/qdrant/qdrant)** — High-performance vector database powering our self-evolving RAG strategy memory.
+- 🐧 **[Kali Linux](https://www.kali.org/) & [Offensive Security](https://www.offsec.com/)** — The foundational operating system and open-source toolchain that makes automated penetration testing possible.
 
 ---
 
