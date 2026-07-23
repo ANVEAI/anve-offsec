@@ -296,6 +296,7 @@ Every engagement outcome is processed, embedded, and stored in **Qdrant Vector D
 
 - 📡 **[ProjectDiscovery](https://github.com/projectdiscovery)** — Creators of `subfinder`, `httpx`, `nuclei`, `katana`, `naabu`, and `dnsx` powering high-speed recon pipelines and vulnerability scanning.
 - 🧠 **[Nous Research](https://github.com/NousResearch)** — Creators of the **Hermes** model series and agent reasoning paradigms that power our stateful CLI reasoning brain (`hermes chat`).
+- 🌙 **[Moonshot AI](https://github.com/MoonshotAI)** — Creators of the **Kimi** long-context LLM models (`kimi-k3`) powering complex multi-turn security analysis.
 - 🛡️ **[PentAGI](https://github.com/pentagi/pentagi)** — Pioneers in autonomous pentesting agent architectures and AI-driven security workflows.
 - 🌳 **[PentestGPT](https://github.com/GreyDoff/PentestGPT)** — Pioneers of the structured task-tree reasoning methodology for guided penetration testing.
 - ⚙️ **[Agent Zero](https://github.com/fradelg/agent-zero)** — Pioneers in organic instrument execution and typed agent memory architectures.
