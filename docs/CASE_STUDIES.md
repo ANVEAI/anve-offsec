@@ -1,7 +1,3 @@
-[⬅️ Back to README](../README.md) | [Architecture](ARCHITECTURE.md) | [Hermes Brain](HERMES_BRAIN.md) | [Self-Evolution](SELF_EVOLUTION.md) | [Guardrails](GUARDRAILS_SECURITY.md) | **Case Studies** | [Contributing](CONTRIBUTING.md)
-
----
-
 # 🔬 Benchmark Case Studies & Validation Reports
 
 This document provides detailed execution logs and validation reports for **anve-offsec** benchmark engagements.

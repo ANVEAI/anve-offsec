@@ -1,7 +1,3 @@
-[⬅️ Back to README](../README.md) | [Architecture](ARCHITECTURE.md) | [Hermes Brain](HERMES_BRAIN.md) | [Self-Evolution](SELF_EVOLUTION.md) | **Guardrails Spec** | [Case Studies](CASE_STUDIES.md) | [Contributing](CONTRIBUTING.md)
-
----
-
 # 🛡️ Defensive Guardrails & Security Governance Specification (`tools/guardrails.py`)
 
 This document details the multi-layered security controls, prompt injection filters, command interception rules, and target scope authorization framework in **anve-offsec**.

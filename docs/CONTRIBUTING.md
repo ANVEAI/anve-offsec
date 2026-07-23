@@ -1,7 +1,3 @@
-[⬅️ Back to README](../README.md) | [Architecture](ARCHITECTURE.md) | [Hermes Brain](HERMES_BRAIN.md) | [Self-Evolution](SELF_EVOLUTION.md) | [Guardrails](GUARDRAILS_SECURITY.md) | [Case Studies](CASE_STUDIES.md) | **Contributing**
-
----
-
 # 🤝 Contributing to anve-offsec
 
 Thank you for your interest in contributing to **anve-offsec**! We welcome community pull requests, bug fixes, agent prompt enhancements, and new security tool integrations.

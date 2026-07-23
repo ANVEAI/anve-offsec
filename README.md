@@ -20,15 +20,6 @@
   <a href="https://qdrant.tech/"><img src="https://img.shields.io/badge/Memory-Qdrant_Vector_RAG-red.svg?style=for-the-badge&logo=qdrant&logoColor=white" alt="Qdrant"></a>
 </p>
 
-<p align="center">
-  <a href="#-what-is-anve-offsec">What is anve-offsec?</a> •
-  <a href="#-see-it-in-action">Demo</a> •
-  <a href="#-multipage-technical-documentation-index">Documentation</a> •
-  <a href="#-why-anve-offsec-the-feature-matrix">Feature Matrix</a> •
-  <a href="#-quick-start-up-in-60-seconds">Quick Start</a> •
-  <a href="#%EF%B8%8F-project-roadmap">Roadmap</a>
-</p>
-
 ---
 
 ## ⚡ What is `anve-offsec`?

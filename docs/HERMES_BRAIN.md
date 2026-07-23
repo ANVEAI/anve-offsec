@@ -1,7 +1,3 @@
-[⬅️ Back to README](../README.md) | [Architecture](ARCHITECTURE.md) | **Hermes Brain Spec** | [Self-Evolution](SELF_EVOLUTION.md) | [Guardrails](GUARDRAILS_SECURITY.md) | [Case Studies](CASE_STUDIES.md) | [Contributing](CONTRIBUTING.md)
-
----
-
 # 🧠 The Hermes AI Reasoning Brain Specification
 
 This document details the internal workings of the **Hermes AI Reasoning Brain**, multi-turn session persistence, persona prompt hierarchy, and phase execution loops in **anve-offsec**.
