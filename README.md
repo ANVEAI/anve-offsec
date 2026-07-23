@@ -214,6 +214,12 @@ Every engagement outcome is processed, embedded, and stored in **Qdrant Vector D
 
 ---
 
+## 🏷️ Related Topics & Ecosystem Keywords
+
+`ai-agents` • `cybersecurity` • `offensive-security` • `bug-bounty` • `kali-linux` • `penetration-testing` • `fastapi` • `qdrant` • `openclaw` • `hermes-llm` • `vector-rag` • `made-in-india`
+
+---
+
 ## ⚠️ Legal Disclaimer
 
 > **IMPORTANT**: `anve-offsec` is built strictly for authorized security assessments, penetration testing within explicit scope, educational research, and bug bounty hunting. Operating this software against targets without explicit written authorization is illegal. The creators and contributors assume no liability for misuse or damage caused by this platform.
