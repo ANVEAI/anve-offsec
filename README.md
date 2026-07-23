@@ -1,5 +1,6 @@
 # 🛡️ anve-offsec: Autonomous Bug Bounty & Offensive Security Platform
 
+[![Proudly Made in India](https://img.shields.io/badge/Proudly_Made_in-India_🇮🇳-FF9933.svg?style=flat)](https://github.com/ANVEAI/anve-offsec)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docker](https://img.shields.io/badge/Docker-24.0+-0db7ed.svg?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Kali Linux](https://img.shields.io/badge/OS-Kali_Rolling-blueviolet.svg?logo=kalilinux&logoColor=white)](https://www.kali.org/)
@@ -153,6 +154,6 @@ This project is licensed under the **Apache License 2.0**. See the [LICENSE](LIC
 ---
 
 <p align="center">
-  <b>Built with ❤️ for the AI & Cybersecurity Community</b><br>
+  <b>Proudly Made in India 🇮🇳 | Built with ❤️ for the Global AI & Cybersecurity Community</b><br>
   <i>Starred the repo? Give it a ⭐️ to support continuous development!</i>
 </p>
