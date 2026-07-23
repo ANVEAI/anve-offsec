@@ -32,6 +32,48 @@
 
 ---
 
+## 🔄 The Autonomous AI Assessment Workflow
+
+`anve-offsec` follows a structured 8-stage assessment pipeline that guides the AI agent from initial target input to final report output:
+
+```mermaid
+graph TD
+    Target([🎯 Authorized Target Scope]) --> Recon[📡 1. Target Reconnaissance]
+    Recon --> Browser[🌐 2. Browser Exploration & Crawling]
+    Browser --> Planning[🧠 3. Attack Planning & Vector RAG]
+    Planning --> Testing[⚡ 4. Active Security Testing]
+    Testing --> Verification[🛡️ 5. Verification & PoC Validation]
+    Verification --> Evidence[📸 6. Evidence Collection]
+    Evidence --> Scoring[📊 7. CVSS 4.0 Risk Scoring]
+    Scoring --> Report[📄 8. Professional Report Generation]
+```
+
+<details>
+<summary><b>View Text-Based Assessment Lifecycle</b></summary>
+
+```text
+Target URL / IP Scope
+    ↓
+1. Reconnaissance (Port Scanning & Tech Fingerprinting)
+    ↓
+2. Browser Exploration (DOM Navigation & SPA Crawling)
+    ↓
+3. Attack Planning (Strategy Formulation & Qdrant RAG)
+    ↓
+4. Active Testing (Vulnerability Assessment)
+    ↓
+5. Verification (PoC Execution & False Positive Filtering)
+    ↓
+6. Evidence Collection (HTTP Traces & Loot Storage)
+    ↓
+7. Risk Scoring (CVSS 4.0 Vectors & CWE Mappings)
+    ↓
+8. Professional Report (Executive & Platform Submissions)
+```
+</details>
+
+---
+
 ### 🏗️ Underlying Architecture
 
 Under the hood, `anve-offsec` powers these capabilities using a stateful, multi-container infrastructure:
