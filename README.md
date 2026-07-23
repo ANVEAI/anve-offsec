@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <i>Stateful Kali Linux Execution • Hermes AI Reasoning Brain • OpenClaw Chromium Gateway • Self-Evolving Qdrant RAG Memory</i>
+  <i>Autonomously assesses web applications for vulnerabilities • Produces evidence-backed security reports • Integrates browser automation & active scanning</i>
 </p>
 
 <p align="center">
@@ -22,11 +22,23 @@
 
 ---
 
-## ⚡ What is `anve-offsec`?
+## ⚡ What `anve-offsec` Does
 
-**`anve-offsec`** is a production-grade, autonomous bug bounty and offensive security platform **proudly engineered in India 🇮🇳**. Unlike traditional vulnerability scanners that rely on static regex rules, or generic LLM wrappers that hallucinate commands, `anve-offsec` operates as a **full-fledged AI security engineer**.
+**`anve-offsec`** is an open-source, autonomous AI security engineering platform **proudly engineered in India 🇮🇳**. Designed for security teams, researchers, and bug bounty operators, it delivers three primary outcomes:
 
-It combines a **stateful Kali Linux core container** with the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium sidecar**, **OWASP ZAP scanning daemon**, and **Qdrant vector RAG memory**. It continuously researches target attack surfaces, dynamically writes custom exploits, retains 100% session context across multi-hour engagements, and **learns from every execution outcome**.
+- 🎯 **Autonomously Assesses Web Applications**: Discovers attack surfaces, identifies web and infrastructure vulnerabilities, and runs end-to-end security evaluations without manual intervention.
+- 📋 **Produces Structured Security Reports**: Emits executive and platform-ready Markdown/JSON reports complete with CVSS vectors, CWE mappings, step-by-step reproduction instructions, and proof-of-concept evidence.
+- 🔍 **Validates Findings with Multimodal Reasoning**: Combines headless browser automation, active tool scanning, and AI reasoning loops to verify vulnerabilities and minimize false positives.
+
+---
+
+### 🏗️ Underlying Architecture
+
+Under the hood, `anve-offsec` powers these capabilities using a stateful, multi-container infrastructure:
+- **Kali Linux Core Container**: Executes native security binaries in an isolated sandbox.
+- **Hermes AI Reasoning Brain**: Maintains stateful, multi-turn session persistence across multi-hour assessments.
+- **OpenClaw Chromium Gateway**: Handles authentication forms, SPA crawling, and DOM interactions.
+- **Qdrant Vector Memory**: Indexes historical attack strategies for continuous self-evolution.
 
 ---
 
