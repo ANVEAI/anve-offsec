@@ -8,56 +8,128 @@
 [![OpenClaw](https://img.shields.io/badge/Browser-OpenClaw_Sidecar-FF4500.svg)](https://openclaw.ai)
 [![Qdrant](https://img.shields.io/badge/Memory-Qdrant_Vector_RAG-red.svg?logo=qdrant&logoColor=white)](https://qdrant.tech/)
 
-> **anve-offsec** is an enterprise-grade, autonomous bug bounty and offensive-security operations platform **proudly developed in India 🇮🇳**. It combines a stateful **Kali Linux core container**, the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium automation**, **OWASP ZAP vulnerability scanning**, and **Qdrant RAG memory** into a unified, self-evolving offensive security platform.
+> **anve-offsec** is an enterprise-grade, autonomous bug bounty and offensive-security operations platform **proudly developed in India 🇮🇳**. Designed for long-running autonomous research and continuous self-evolution, it combines a stateful **Kali Linux core container**, the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium automation**, **OWASP ZAP vulnerability scanning**, and **Qdrant RAG memory** into a self-improving pentest ecosystem.
 
 ---
 
 ## 📸 Key Capabilities at a Glance
 
+- ⏳ **Long-Running Autonomous Engagements**: No engagement timeouts. Executes multi-phase pentests over hours or days with crash-safe session state retention.
+- 🧬 **Self-Evolving Pentest Engine**: Learns from every execution outcome. Stores successful attack paths in Qdrant RAG memory to automatically improve strategy on future targets.
 - 🧠 **Hermes AI Reasoning Brain**: Multi-turn LLM agent executing complex terminal commands, security tools, and custom exploit payloads natively inside Kali Linux.
 - 🌐 **OpenClaw Browser Sidecar**: Headless Chromium gateway for complex web interaction, authentication bypass testing, and dynamic DOM crawling.
 - ⚡ **OWASP ZAP Integration**: Automated active/passive web application scanning, spidering, and REST API vulnerability discovery via sidecar daemon.
-- 🧠 **Vector RAG Memory (Qdrant)**: Continuous self-learning engine that stores attack strategies, confidence scores, and historical execution outcomes.
 - 🛡️ **Legal Target Authorization Engine**: Configurable target whitelist enforcing explicit legal scope (`lab`, `ctf`, `bug-bounty`, `self`, `client`) with strict override audit logging.
-- 📊 **Real-Time Stream Dashboard**: Modern FastAPI web control plane featuring live Server-Sent Events (SSE) logs, real-time operator instruction injection, and instant run continuations.
+- 📊 **Real-Time Control Plane**: Modern FastAPI web interface featuring live Server-Sent Events (SSE) logs, real-time operator instruction injection, and instant run continuations.
 - 🧪 **Built-in Lab Environment**: Ships with pre-configured isolated targets (**DVWA** and **Metasploitable2**) for safe local benchmarking and vulnerability research.
+
+---
+
+## ⏳ Long-Running Autonomous Research & Engagement Lifecycle
+
+Traditional pentesting scripts fail on complex targets because they time out or lose context when an approach encounters a obstacle. **anve-offsec** is engineered specifically for **unattended, long-running security engagements**:
+
+```mermaid
+flowchart TD
+    Start([🚀 Launch Engagement]) --> Phase1[Phase 1: Deep Recon & Asset Discovery]
+    Phase1 --> Check1{Phase Outcome?}
+    
+    Check1 -->|Success| Phase2[Phase 2: Baseline & Vulnerability Scan]
+    Check1 -->|Failure Attempt 1| Retry1[Attempt 2: Alternative Tooling / Parameters]
+    Retry1 --> Check1
+    Check1 -->|Failure Attempt 2| Retry2[Attempt 3: Custom Python Exploit / Manual Bypass]
+    Retry2 --> Check1
+    
+    Phase2 --> Check2{Phase Outcome?}
+    Check2 -->|Success| Phase3[Phase 3: Exploitation & PoC Verification]
+    Check2 -->|Failure| Adaptation[Self-Evolution Loop: Query Qdrant RAG Memory]
+    Adaptation --> Phase2
+    
+    Phase3 --> Phase4[Phase 4: Synthesis & Reporting]
+    Phase4 --> Complete([✅ Engagement Complete & Lessons Saved])
+```
+
+### 1. Zero Context Loss Across Phases
+Each phase executes as part of a single continuous Hermes session (`--resume <session_id>`). The agent remembers every discovery, header, directory scan, and error encountered in earlier phases, avoiding duplicate work.
+
+### 2. Adaptive 3-Attempt Strategy Escalation
+When a phase faces roadblocks (e.g., WAF blocks or closed ports), the runner enforces a progressive retry escalation:
+- **Attempt 1**: Standard tooling and default wordlists.
+- **Attempt 2**: Evasion flags (e.g., `--tamper`, user-agent rotation, proxy routing).
+- **Attempt 3**: Radically different approaches (e.g., custom Python payloads, out-of-band exfiltration, or custom exploit frameworks).
+
+### 3. Crash-Safe Session Persistence
+All state is written to `/work/dashboard-logs/<run_id>.engagement.json` after every turn. If Docker restarts or host power cycles, the engagement seamlessly resumes at the exact active phase with full LLM session memory restored.
+
+### 4. Live Mid-Run Operator Steering
+Operators can inject instructions from the dashboard UI in real time without interrupting the run:
+- *"Focus on the `/api/v2/` endpoints"*
+- *"Bypass cloudflare WAF using origin IP `192.168.1.50`"*
+Instructions are queued and delivered to Hermes on its next decision turn.
+
+---
+
+## 🧬 Self-Evolving Pentest Architecture (RAG + Qdrant)
+
+**anve-offsec** gets smarter with every target it tests. It doesn't rely on static templates; it builds a cumulative strategy model over time:
+
+```
+                      +-----------------------------------+
+                      |      Completed Engagement Run     |
+                      +-----------------+-----------------+
+                                        |
+                                        v
+                      +-----------------------------------+
+                      |   Post-Run Evolution Engine       |
+                      |  - Extracts scenario & techniques |
+                      |  - Evaluates tool success rate    |
+                      +-----------------+-----------------+
+                                        |
+                                        v
+                      +-----------------------------------+
+                      |    Qdrant RAG Memory Index        |
+                      |  - Vector embeddings of strategies|
+                      |  - Scenario confidence scores     |
+                      +-----------------+-----------------+
+                                        |
+                                        v
+                      +-----------------------------------+
+                      |      Future Engagement Run        |
+                      |  - Injects past empirical lessons |
+                      |  - Prioritizes high-success tools |
+                      +-----------------------------------+
+```
+
+### Strategy Memory Architecture (`/work/memory/strategy.json`):
+1. **Scenario Classification**: Indexes target types (e.g., `web-app:sql-injection`, `api:bbola`, `infra:ssh-enum`).
+2. **Tool Effectiveness Tracking**: Calculates real success rates and average completion times for tools (`sqlmap`, `nmap`, `zap`, `gobuster`, `ffuf`, `nuclei`).
+3. **Cross-Agent Knowledge Sharing**: Discoveries from a `recon` agent automatically seed strategy prompts for `owasp/injection` or `exploit` agents.
 
 ---
 
 ## 🧠 Deep Dive: The Hermes AI Reasoning Brain
 
-At the core of **anve-offsec** is **Hermes**—a specialized AI reasoning agent that acts as the lead security researcher and execution brain inside the Kali Linux environment.
+At the core of **anve-offsec** is **Hermes**—a specialized AI reasoning agent acting as the lead security researcher inside the Kali Linux environment.
 
-```
-       +-------------------------------------------------------------------+
-       |                       Hermes AI Brain                             |
-       |  - Analyzes target recon & attack paths                           |
-       |  - Formulates phase-by-phase penetration strategy                 |
-       |  - Invokes terminal commands & custom exploit frameworks           |
-       |  - Maintains context via --resume <session_id> across phases       |
-       +-------------------+-----------------------------------------------+
-                           |
-            +--------------+--------------+
-            |                             |
-            v                             v
-+-----------------------+     +-----------------------+
-|  Specialized Agents   |     |  Self-Evolution RAG   |
-| - Bug Bounty Specialist|    | - Queries Qdrant DB   |
-| - OWASP Top 10 Experts|     | - Injects past lessons|
-| - MITRE ATT&CK Framework|   | - Optimizes strategy  |
-+-----------------------+     +-----------------------+
-```
+### Specialized Persona Hierarchy
+Over 40+ prompt configurations in `config/agents/` allow Hermes to dynamically assume specialized roles:
+- **Core Roles**: `bug-bounty`, `recon`, `web`, `exploit`, `report`
+- **OWASP Specialists**: `owasp/injection`, `owasp/auth`, `owasp/access-control`, `owasp/ssrf`, `owasp/crypto`, `owasp/misconfig`
+- **MITRE ATT&CK**: `mitre/recon`, `mitre/initial-access`, `mitre/credential-access`, `mitre/privilege-escalation`, `mitre/lateral-movement`
+- **Supervision & Safety**: `adviser` (loop detection), `reflector` (failure recovery), `barrier` (human-in-the-loop control)
 
-### Key Hermes Mechanics:
-1. **Multi-Turn Session Continuity**: Unlike simple one-shot LLMs, Hermes retains complete conversation history across multi-hour engagements using session resumption (`--resume <session_id>`).
-2. **Specialized Persona Hierarchy**: Over 40+ prompt configurations in `config/agents/` allow Hermes to dynamically assume specialized roles:
-   - **Core Roles**: `bug-bounty`, `recon`, `web`, `exploit`, `report`
-   - **OWASP Specialists**: `owasp/injection`, `owasp/auth`, `owasp/access-control`, `owasp/ssrf`
-   - **MITRE Tactics**: `mitre/initial-access`, `mitre/credential-access`, `mitre/privilege-escalation`, `mitre/lateral-movement`
-   - **Supervision Roles**: `adviser` (loop detection), `reflector` (failure recovery), `barrier` (human-in-the-loop)
-3. **Structured Phase Signaling**: Hermes works autonomously on a phase until it produces explicit completion signals:
-   - `PHASE_COMPLETE: <name>` $\rightarrow$ Supervisor advances to the next phase.
-   - `PHASE_BLOCKED: <name>` $\rightarrow$ Supervisor triggers fallback strategies or operator review.
+---
+
+## ⚖️ Feature Comparison Matrix
+
+| Feature | `anve-offsec` | Traditional Scanners (ZAP/Nessus) | Generic LLM Wrappers |
+|---|---|---|---|
+| **Execution Engine** | Native Kali Linux Shell + Python | Pre-programmed Rules | Basic Script Generation |
+| **Session Memory** | Stateful `--resume` across multi-hour runs | None | Single-turn context window |
+| **Self-Evolution** | Qdrant Vector RAG + Strategy Learning | Manual Rule Updates | None |
+| **Browser Automation** | OpenClaw Headless Chromium Sidecar | Simple HTTP Crawler | Basic Puppeteer Scripts |
+| **Safety Governance** | Explicit Target Authorization + Override Logs | Target URL Input | No Scope Controls |
+| **Operator Steering** | Live Mid-Run Instruction Injection | Hard Stop / Start | Re-run Prompt |
 
 ---
 
@@ -189,16 +261,6 @@ Want direct terminal interaction with the Hermes AI agent inside Kali?
 | **VPN Client** | `dperson/openvpn-client` | N/A | Isolated OpenVPN tunnel container for connecting to CTF lab networks. |
 | **DVWA** | `vulnerables/web-dvwa` | `8080` | Damn Vulnerable Web Application local testing target. |
 | **Metasploitable** | `tleemcjr/metasploitable2` | `8081` | Metasploitable2 vulnerable target container. |
-
----
-
-## 🧠 Self-Evolution & Vector RAG Memory
-
-`anve-offsec` doesn't just execute tasks—it continuously learns:
-
-1. **Post-Run Analysis (`tools/evolution_engine.py`)**: After every engagement, the outcome, tools used, success rate, and error trace are processed.
-2. **Vector Indexing in Qdrant**: Successful attack strategies and payloads are embedded and saved into Qdrant vector database (`/work/qdrant`).
-3. **Context Injection**: On future runs against similar targets, Hermes queries Qdrant to retrieve historical "lessons learned", injecting top-performing strategies into its reasoning prompt before executing commands.
 
 ---
 
