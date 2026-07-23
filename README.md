@@ -8,26 +8,61 @@
 [![OpenClaw](https://img.shields.io/badge/Browser-OpenClaw_Sidecar-FF4500.svg)](https://openclaw.ai)
 [![Qdrant](https://img.shields.io/badge/Memory-Qdrant_Vector_RAG-red.svg?logo=qdrant&logoColor=white)](https://qdrant.tech/)
 
-> **anve-offsec** is an enterprise-grade, autonomous bug bounty and offensive-security operations platform **proudly developed in India 🇮🇳**. Designed for long-running autonomous research and continuous self-evolution, it combines a stateful **Kali Linux core container**, the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium automation**, **OWASP ZAP vulnerability scanning**, and **Qdrant RAG memory** into a self-improving pentest ecosystem.
+> **anve-offsec** is an enterprise-grade, autonomous bug bounty and offensive-security operations platform **proudly developed in India 🇮🇳**. Built for long-running autonomous research and continuous self-evolution, it combines a stateful **Kali Linux core container**, the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium automation**, **OWASP ZAP vulnerability scanning**, and **Qdrant RAG memory** into a self-improving pentest ecosystem.
 
 ---
 
 ## 📸 Key Capabilities at a Glance
 
-- ⏳ **Long-Running Autonomous Engagements**: No engagement timeouts. Executes multi-phase pentests over hours or days with crash-safe session state retention.
+- ⏳ **Long-Running Autonomous Engagements**: Executes multi-phase pentests over hours or days with zero context loss and crash-safe state retention.
 - 🧬 **Self-Evolving Pentest Engine**: Learns from every execution outcome. Stores successful attack paths in Qdrant RAG memory to automatically improve strategy on future targets.
 - 🧠 **Hermes AI Reasoning Brain**: Multi-turn LLM agent executing complex terminal commands, security tools, and custom exploit payloads natively inside Kali Linux.
 - 🌐 **OpenClaw Browser Sidecar**: Headless Chromium gateway for complex web interaction, authentication bypass testing, and dynamic DOM crawling.
 - ⚡ **OWASP ZAP Integration**: Automated active/passive web application scanning, spidering, and REST API vulnerability discovery via sidecar daemon.
-- 🛡️ **Legal Target Authorization Engine**: Configurable target whitelist enforcing explicit legal scope (`lab`, `ctf`, `bug-bounty`, `self`, `client`) with strict override audit logging.
+- 🛡️ **Defensive Guardrails & Scope Control**: Input/output protection against prompt injection, destructive shell commands, and out-of-scope testing with audit logs.
 - 📊 **Real-Time Control Plane**: Modern FastAPI web interface featuring live Server-Sent Events (SSE) logs, real-time operator instruction injection, and instant run continuations.
 - 🧪 **Built-in Lab Environment**: Ships with pre-configured isolated targets (**DVWA** and **Metasploitable2**) for safe local benchmarking and vulnerability research.
 
 ---
 
+## 🧠 Deep Dive: The Hermes AI Reasoning Brain (`tools/engagement_runner.py`)
+
+At the core of **anve-offsec** is **Hermes**—a specialized AI reasoning agent acting as the lead security researcher inside the Kali Linux environment.
+
+```
+       +-------------------------------------------------------------------+
+       |                       Hermes AI Brain                             |
+       |  - Analyzes target recon & attack paths                           |
+       |  - Formulates phase-by-phase penetration strategy                 |
+       |  - Invokes terminal commands & custom exploit frameworks           |
+       |  - Maintains context via --resume <session_id> across phases       |
+       +-------------------+-----------------------------------------------+
+                           |
+            +--------------+--------------+
+            |                             |
+            v                             v
++-----------------------+     +-----------------------+
+|  Specialized Agents   |     |  Self-Evolution RAG   |
+| - Bug Bounty Specialist|    | - Queries Qdrant DB   |
+| - OWASP Top 10 Experts|     | - Injects past lessons|
+| - MITRE ATT&CK Framework|   | - Optimizes strategy  |
++-----------------------+     +-----------------------+
+```
+
+### Key Hermes Engineering Mechanics:
+1. **Multi-Turn Session Continuity**: Re-invokes Hermes with `--resume <session_id>` across turns, ensuring 100% of working context is preserved across multi-phase engagements.
+2. **Specialized Persona Hierarchy**: Over 40+ prompt configurations in `config/agents/` allow Hermes to dynamically assume specialized roles:
+   - **Core Roles**: `bug-bounty`, `recon`, `web`, `exploit`, `report`
+   - **OWASP Specialists**: `owasp/injection`, `owasp/auth`, `owasp/access-control`, `owasp/ssrf`, `owasp/crypto`, `owasp/misconfig`
+   - **MITRE ATT&CK**: `mitre/recon`, `mitre/initial-access`, `mitre/credential-access`, `mitre/privilege-escalation`, `mitre/lateral-movement`
+   - **Supervision & Safety**: `adviser` (loop detection), `reflector` (failure recovery), `barrier` (human-in-the-loop control)
+3. **Structured Phase Signaling**: Hermes outputs explicit regex tokens (`PHASE_COMPLETE: <name>` or `PHASE_BLOCKED: <name>`) to signal phase boundaries to the execution runner.
+
+---
+
 ## ⏳ Long-Running Autonomous Research & Engagement Lifecycle
 
-Traditional pentesting scripts fail on complex targets because they time out or lose context when an approach encounters a obstacle. **anve-offsec** is engineered specifically for **unattended, long-running security engagements**:
+Traditional pentesting scripts fail on complex targets because they time out or lose context when an approach encounters an obstacle. **anve-offsec** is engineered specifically for **unattended, long-running security engagements**:
 
 ```mermaid
 flowchart TD
@@ -35,7 +70,7 @@ flowchart TD
     Phase1 --> Check1{Phase Outcome?}
     
     Check1 -->|Success| Phase2[Phase 2: Baseline & Vulnerability Scan]
-    Check1 -->|Failure Attempt 1| Retry1[Attempt 2: Alternative Tooling / Parameters]
+    Check1 -->|Failure Attempt 1| Retry1[Attempt 2: Evasion Flags / Alternative Tooling]
     Retry1 --> Check1
     Check1 -->|Failure Attempt 2| Retry2[Attempt 3: Custom Python Exploit / Manual Bypass]
     Retry2 --> Check1
@@ -49,29 +84,16 @@ flowchart TD
     Phase4 --> Complete([✅ Engagement Complete & Lessons Saved])
 ```
 
-### 1. Zero Context Loss Across Phases
-Each phase executes as part of a single continuous Hermes session (`--resume <session_id>`). The agent remembers every discovery, header, directory scan, and error encountered in earlier phases, avoiding duplicate work.
-
-### 2. Adaptive 3-Attempt Strategy Escalation
-When a phase faces roadblocks (e.g., WAF blocks or closed ports), the runner enforces a progressive retry escalation:
-- **Attempt 1**: Standard tooling and default wordlists.
-- **Attempt 2**: Evasion flags (e.g., `--tamper`, user-agent rotation, proxy routing).
-- **Attempt 3**: Radically different approaches (e.g., custom Python payloads, out-of-band exfiltration, or custom exploit frameworks).
-
-### 3. Crash-Safe Session Persistence
-All state is written to `/work/dashboard-logs/<run_id>.engagement.json` after every turn. If Docker restarts or host power cycles, the engagement seamlessly resumes at the exact active phase with full LLM session memory restored.
-
-### 4. Live Mid-Run Operator Steering
-Operators can inject instructions from the dashboard UI in real time without interrupting the run:
-- *"Focus on the `/api/v2/` endpoints"*
-- *"Bypass cloudflare WAF using origin IP `192.168.1.50`"*
-Instructions are queued and delivered to Hermes on its next decision turn.
+### Key Long-Running Features:
+- **Adaptive 3-Attempt Retry Escalation**: When a phase fails, the runner escalates from standard tools $\rightarrow$ evasion parameters $\rightarrow$ custom Python exploits.
+- **Crash-Safe State Persistence**: Saves engagement state after every turn to `/work/dashboard-logs/<run_id>.engagement.json`. Resumes automatically on container or host restart.
+- **Live Mid-Run Operator Steering**: Inject instructions from the dashboard UI mid-engagement without interrupting LLM reasoning context.
 
 ---
 
-## 🧬 Self-Evolving Pentest Architecture (RAG + Qdrant)
+## 🧬 Self-Evolving Pentest Architecture (`tools/evolution_engine.py`)
 
-**anve-offsec** gets smarter with every target it tests. It doesn't rely on static templates; it builds a cumulative strategy model over time:
+**anve-offsec** gets smarter with every target it tests. It builds an empirical strategy model stored in Qdrant vector memory:
 
 ```
                       +-----------------------------------+
@@ -100,23 +122,23 @@ Instructions are queued and delivered to Hermes on its next decision turn.
                       +-----------------------------------+
 ```
 
-### Strategy Memory Architecture (`/work/memory/strategy.json`):
-1. **Scenario Classification**: Indexes target types (e.g., `web-app:sql-injection`, `api:bbola`, `infra:ssh-enum`).
-2. **Tool Effectiveness Tracking**: Calculates real success rates and average completion times for tools (`sqlmap`, `nmap`, `zap`, `gobuster`, `ffuf`, `nuclei`).
-3. **Cross-Agent Knowledge Sharing**: Discoveries from a `recon` agent automatically seed strategy prompts for `owasp/injection` or `exploit` agents.
+### Self-Evolution Highlights:
+1. **Scenario Classification**: Automatically categorizes target tasks into structured scenarios (`web-app:sql-injection`, `web-app:ssrf`, `api:idor`, `infra:ssh-enum`).
+2. **Confidence Thresholding**:
+   - `CONFIDENCE_THRESHOLD = 0.7`: RAG strategies above 70% confidence are injected into active prompts.
+   - `AUTO_PROMPT_UPDATE_THRESHOLD = 0.85`: Strategies above 85% confidence automatically update static agent prompts (`config/agents/*.prompt`).
+3. **Strategy Memory (`/work/memory/strategy.json`)**: Tracks real-world success rates, tool execution times, and common failure modes across runs.
 
 ---
 
-## 🧠 Deep Dive: The Hermes AI Reasoning Brain
+## 🛡️ Defensive Guardrails & Governance (`tools/guardrails.py`)
 
-At the core of **anve-offsec** is **Hermes**—a specialized AI reasoning agent acting as the lead security researcher inside the Kali Linux environment.
+`anve-offsec` provides comprehensive security controls to prevent unintended actions:
 
-### Specialized Persona Hierarchy
-Over 40+ prompt configurations in `config/agents/` allow Hermes to dynamically assume specialized roles:
-- **Core Roles**: `bug-bounty`, `recon`, `web`, `exploit`, `report`
-- **OWASP Specialists**: `owasp/injection`, `owasp/auth`, `owasp/access-control`, `owasp/ssrf`, `owasp/crypto`, `owasp/misconfig`
-- **MITRE ATT&CK**: `mitre/recon`, `mitre/initial-access`, `mitre/credential-access`, `mitre/privilege-escalation`, `mitre/lateral-movement`
-- **Supervision & Safety**: `adviser` (loop detection), `reflector` (failure recovery), `barrier` (human-in-the-loop control)
+- **Input Guardrails**: Protects against prompt injection by scanning for adversarial patterns (`ignore previous instructions`, `<system>`, `<root>`) and decoding base64 / unicode homograph obfuscations.
+- **Output Guardrails**: Intercepts dangerous terminal commands before execution inside Kali (`rm -rf /`, `mkfs`, fork bombs, system shutdown).
+- **Data Exfiltration Prevention**: Blocks attempts to read host credentials (`/etc/shadow`, `~/.ssh/id_rsa`, `~/.aws/credentials`, `~/.git-credentials`).
+- **Target Authorization Engine (`config/authorized-targets.json`)**: Enforces explicit legal scope checking (`lab`, `ctf`, `bug-bounty`, `self`, `client`). Unapproved target overrides require typed operator confirmation and are audited to `/work/memory/override-log.jsonl`.
 
 ---
 
@@ -128,12 +150,12 @@ Over 40+ prompt configurations in `config/agents/` allow Hermes to dynamically a
 | **Session Memory** | Stateful `--resume` across multi-hour runs | None | Single-turn context window |
 | **Self-Evolution** | Qdrant Vector RAG + Strategy Learning | Manual Rule Updates | None |
 | **Browser Automation** | OpenClaw Headless Chromium Sidecar | Simple HTTP Crawler | Basic Puppeteer Scripts |
-| **Safety Governance** | Explicit Target Authorization + Override Logs | Target URL Input | No Scope Controls |
+| **Safety Governance** | Prompt Injection + Destructive Command Interception | Target URL Input | No Scope Controls |
 | **Operator Steering** | Live Mid-Run Instruction Injection | Hard Stop / Start | Re-run Prompt |
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ System Architecture & Infrastructure
 
 ```mermaid
 graph TD
@@ -154,46 +176,40 @@ graph TD
     end
 ```
 
+### Microservice Details:
+- **Docker Socket Access**: `kali` container mounts `/var/run/docker.sock` to spawn ephemeral sub-worker containers.
+- **Out-of-Band (OOB) Range (`28000–30000`)**: Port range reserved for reverse shells, DNS exfiltration, and out-of-band HTTP callbacks.
+
 ---
 
 ## 🔬 Benchmark Case Studies
 
 ### 📑 Case Study 1: Automated Assessment of Damn Vulnerable Web App (DVWA)
-
 - **Target**: Local DVWA container (`http://dvwa:8080`)
 - **Agent Assigned**: `bug-bounty` (Hermes Brain + OWASP Specialists)
 - **Execution Flow**:
-  1. **Phase 1 (Reconnaissance)**: Hermes runs `whatweb` and `curl` to fingerprint PHP/Apache stack and detect default cookie structures.
-  2. **Phase 2 (ZAP Baseline & Crawler)**: Triggers ZAP spider via API (`zap_client.py`) to discover `/vulnerabilities/sqli/`, `/vulnerabilities/exec/`, `/vulnerabilities/fi/`.
-  3. **Phase 3 (Targeted Vulnerability Testing)**:
-     - Detects Command Injection on `/vulnerabilities/exec/` via IP input ping parameter (`127.0.0.1; id`).
-     - Detects SQL Injection on `/vulnerabilities/sqli/` (`1' OR '1'='1`).
-     - Verifies File Inclusion on `/vulnerabilities/fi/?page=include.php`.
-  4. **Phase 4 (Reporting & Evidence Generation)**: Writes full JSON & Markdown vulnerability report with exact reproduction steps to `/work/loot/dvwa_report.md`.
-- **Outcome**: 100% automated detection of high & critical vulnerabilities in under 8 minutes without human intervention.
-
----
+  1. Fingerprints PHP/Apache stack and maps endpoints.
+  2. Runs OWASP ZAP spider via API (`zap_client.py`) to discover `/vulnerabilities/sqli/`, `/vulnerabilities/exec/`, `/vulnerabilities/fi/`.
+  3. Verifies Command Injection (`127.0.0.1; id`), SQL Injection (`1' OR '1'='1`), and File Inclusion (`?page=include.php`).
+  4. Generates executive Markdown & JSON report in `/work/loot/dvwa_report.md`.
+- **Outcome**: 100% automated detection in under 8 minutes.
 
 ### 📑 Case Study 2: Metasploitable2 Infrastructure & Service Enumeration
-
 - **Target**: Local Metasploitable2 container (`http://metasploitable2:8081`)
 - **Agent Assigned**: `recon` + `exploit`
 - **Execution Flow**:
-  1. **Phase 1 (Host & Service Discovery)**: Runs Nmap service version scan (`nmap -sV -sC`) to identify open ports: 21 (VSFTPD 2.3.4), 22 (OpenSSH 4.7p1), 80 (Apache 2.2.8), 6667 (UnrealIRCd).
-  2. **Phase 2 (CVE Lookup & Vulnerability Matching)**: Queries local RAG knowledge base & CVE lookup tools for known exploits targeting VSFTPD 2.3.4 (backdoor execution) and UnrealIRCd.
-  3. **Phase 3 (Verification & Proof-of-Concept)**: Synthesizes custom Python exploit script (`/tools/exploit_framework.py`) to safely verify backdoor reactivity.
+  1. Identifies open ports: 21 (VSFTPD 2.3.4), 22 (OpenSSH 4.7p1), 80 (Apache 2.2.8), 6667 (UnrealIRCd).
+  2. Queries local RAG knowledge base & CVE lookup tools for VSFTPD 2.3.4 backdoor exploit paths.
+  3. Synthesizes custom Python exploit script (`/tools/exploit_framework.py`) to verify backdoor reactivity.
 - **Outcome**: Identified 6 exploit paths and generated executive summary report.
 
----
-
 ### 📑 Case Study 3: Auth Wall Bypass & Dynamic Session Automation
-
 - **Target**: Protected Client Staging Web Application
 - **Agent Assigned**: `auth-wall` + OpenClaw Browser Sidecar
 - **Execution Flow**:
-  1. **Phase 1 (Browser Navigation)**: OpenClaw sidecar launches headless Chromium, navigates to target login page, and fills credentials dynamically.
-  2. **Phase 2 (Token Extraction & Session Injection)**: Extracts JWT Bearer token & session cookies from browser state, handing them off to Hermes inside Kali.
-  3. **Phase 3 (Authenticated Vulnerability Testing)**: Hermes uses authenticated tokens to run IDOR scans (`idor_scanner.py`) and API checks (`api_tester.py`) against post-login endpoints.
+  1. OpenClaw launches headless Chromium and completes dynamic login form.
+  2. Extracts JWT Bearer token & session cookies, passing them to Hermes inside Kali.
+  3. Hermes performs authenticated IDOR (`idor_scanner.py`) and API security testing (`api_tester.py`).
 - **Outcome**: Discovered broken object-level authorization (BOLA) on user profile endpoints.
 
 ---
@@ -261,20 +277,6 @@ Want direct terminal interaction with the Hermes AI agent inside Kali?
 | **VPN Client** | `dperson/openvpn-client` | N/A | Isolated OpenVPN tunnel container for connecting to CTF lab networks. |
 | **DVWA** | `vulnerables/web-dvwa` | `8080` | Damn Vulnerable Web Application local testing target. |
 | **Metasploitable** | `tleemcjr/metasploitable2` | `8081` | Metasploitable2 vulnerable target container. |
-
----
-
-## 🔒 Authorization & Ethical Safeguards
-
-`anve-offsec` incorporates strict governance controls to prevent unauthorized testing:
-
-- **Target Whitelisting (`config/authorized-targets.json`)**: Enforces explicit authorization categories:
-  - `lab`: Local Docker targets (`127.0.0.1`, `dvwa`, `metasploitable2`).
-  - `ctf`: Platforms like TryHackMe, HackTheBox, VulnHub.
-  - `bug-bounty`: HackerOne, Bugcrowd, Intigriti scope.
-  - `self` / `client`: Whitelisted domains.
-- **Audit Logging**: Any manual target override requires explicit confirmation text and is permanently logged to `/work/memory/override-log.jsonl`.
-- **Budgeting & Turn Limits**: Features automatic turn timeouts (`1800s`), max engagement hours (`6h`), price limiters, and infinite loop detection.
 
 ---
 
