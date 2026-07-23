@@ -115,17 +115,19 @@ Explore the complete sub-documentation system in [`docs/`](docs/):
 
 ---
 
-## 🔥 Why `anve-offsec`? (The Feature Matrix)
+## ⚡ Frontier Benchmark Comparison
 
-| Capability | 🛡️ `anve-offsec` | 🐢 Traditional Scanners (ZAP/Nessus) | 🤖 Generic LLM Wrappers |
-|---|---|---|---|
-| **Execution Environment** | **Native Kali Linux Shell + Python** | Fixed Rule Scripts | Text Snippets Only |
-| **Session Memory** | **Stateful `--resume` (Hours/Days)** | None | Single-Turn Context Limit |
-| **Self-Evolution** | **Qdrant RAG Memory (Learns from runs)** | Static Signatures | None |
-| **Browser Automation** | **OpenClaw Headless Chromium Sidecar** | Basic HTTP Crawling | Basic Puppeteer Scripts |
-| **Adaptive Escalation** | **Standard $\rightarrow$ Evasion $\rightarrow$ Custom Exploit** | Single Pass Scan | Halts on Error |
-| **Safety Governance** | **Prompt Injection Interception + Target Scope Audit** | Simple Scope Regex | No Guardrails |
-| **Operator Steering** | **Real-Time Mid-Run Instruction Queue (SSE)** | Cancel Only | Restart Session |
+`anve-offsec` is built to bridge the gap between closed-source enterprise platforms and open-source accessibility. Here is how `anve-offsec` compares against the platforms defining the future of AI cybersecurity:
+
+| Dimension | 🛡️ `anve-offsec` | 🔮 Anthropic Project Glasswing | 🌐 Horizon3.ai (NodeZero) | ⚡ Pentera |
+|---|---|---|---|---|
+| **Access Model** | **100% Open-Source (Apache 2.0)** | Closed Frontier Research | Proprietary SaaS | Enterprise On-Prem/SaaS |
+| **Reasoning Engine** | **Stateful Hermes LLM + Session Resume** | Frontier Claude Cyber Models | Proprietary Rule/AI Engine | Proprietary Attack Graph |
+| **Execution Environment** | **Native Kali Linux Container** | Isolated Sandboxes | Agentless Cloud/Node | Agentless Network Probe |
+| **Self-Evolution RAG** | **Qdrant Vector Strategy Memory** | Model Training/RLHF | Internal Threat Data | Static Vulnerability DB |
+| **Browser & Auth Crawling** | **OpenClaw Chromium Gateway** | Multimodal API | Basic Web Crawling | Basic Web Crawling |
+| **Safety Governance** | **Prompt Injection Guardrails & Scope Audit** | Constitutional AI | Scope Constraints | Scope Constraints |
+| **Deployment Cost** | **Free & Self-Hosted** | Enterprise / Research Only | Enterprise ($50k+/yr) | Enterprise ($50k+/yr) |
 
 ---
 
