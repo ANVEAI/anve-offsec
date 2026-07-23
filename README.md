@@ -294,9 +294,14 @@ Every engagement outcome is processed, embedded, and stored in **Qdrant Vector D
 
 `anve-offsec` is proudly built on top of pioneering open-source research and tools created by the global AI and security community:
 
+- 📡 **[ProjectDiscovery](https://github.com/projectdiscovery)** — Creators of `subfinder`, `httpx`, `nuclei`, `katana`, `naabu`, and `dnsx` powering high-speed recon pipelines and vulnerability scanning.
 - 🧠 **[Nous Research](https://github.com/NousResearch)** — Creators of the **Hermes** model series and agent reasoning paradigms that power our stateful CLI reasoning brain (`hermes chat`).
 - 🛡️ **[PentAGI](https://github.com/pentagi/pentagi)** — Pioneers in autonomous pentesting agent architectures and AI-driven security workflows.
+- 🌳 **[PentestGPT](https://github.com/GreyDoff/PentestGPT)** — Pioneers of the structured task-tree reasoning methodology for guided penetration testing.
+- ⚙️ **[Agent Zero](https://github.com/fradelg/agent-zero)** — Pioneers in organic instrument execution and typed agent memory architectures.
+- ⚡ **[reconftw](https://github.com/six2dez/reconftw)** & **[Osmedeus](https://github.com/j3ssie/osmedeus)** — The gold standard in automated reconnaissance playbooks and target attack surface mapping.
 - 🌐 **[OpenClaw](https://github.com/openclaw/openclaw)** — Creators of the isolated headless Chromium gateway for automated DOM crawling and authentication flows.
+- 📚 **[SecLists](https://github.com/danielmiessler/SecLists)** & **[PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings)** — Essential security assessment payload dictionaries and fuzzing wordlists by Daniel Miessler and Swissky.
 - ⚡ **[Qdrant](https://github.com/qdrant/qdrant)** — High-performance vector database powering our self-evolving RAG strategy memory.
 - 🐧 **[Kali Linux](https://www.kali.org/) & [Offensive Security](https://www.offsec.com/)** — The foundational operating system and open-source toolchain that makes automated penetration testing possible.
 
