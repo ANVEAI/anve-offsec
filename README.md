@@ -32,6 +32,10 @@ It combines a **stateful Kali Linux core container** with the **Hermes AI Reason
 
 ## 🎬 See it in Action
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ANVEAI/anve-offsec/main/docs/assets/demo.gif" alt="anve-offsec Live Terminal & Hermes AI Execution" width="100%" />
+</p>
+
 ```text
 ┌──(pentest㉿anve-offsec)-[/work]
 └─$ ./scripts/hermes.sh --task "Run a full bug bounty assessment on http://dvwa:8080"
