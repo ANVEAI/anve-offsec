@@ -1,187 +1,221 @@
-# 🛡️ anve-offsec: Autonomous Bug Bounty & Offensive Security Platform
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ANVEAI/anve-offsec/main/docs/assets/banner.png" alt="anve-offsec banner" width="100%" error="this.src='https://via.placeholder.com/1200x400/0d1117/58a6ff?text=anve-offsec+:+Autonomous+AI+Security+Engineer'"/>
+</p>
 
-[![Proudly Made in India](https://img.shields.io/badge/Proudly_Made_in-India_🇮🇳-FF9933.svg?style=flat)](https://github.com/ANVEAI/anve-offsec)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Docker](https://img.shields.io/badge/Docker-24.0+-0db7ed.svg?logo=docker&logoColor=white)](https://www.docker.com/)
-[![Kali Linux](https://img.shields.io/badge/OS-Kali_Rolling-blueviolet.svg?logo=kalilinux&logoColor=white)](https://www.kali.org/)
-[![FastAPI](https://img.shields.io/badge/Control_Plane-FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![OpenClaw](https://img.shields.io/badge/Browser-OpenClaw_Sidecar-FF4500.svg)](https://openclaw.ai)
-[![Qdrant](https://img.shields.io/badge/Memory-Qdrant_Vector_RAG-red.svg?logo=qdrant&logoColor=white)](https://qdrant.tech/)
+<h1 align="center">🛡️ anve-offsec</h1>
+<p align="center">
+  <b>The Open-Source Autonomous AI Security Engineer & Bug Bounty Platform</b>
+</p>
 
-> **anve-offsec** is an enterprise-grade, autonomous bug bounty and offensive-security operations platform **proudly developed in India 🇮🇳**. Built for long-running autonomous research and continuous self-evolution, it combines a stateful **Kali Linux core container**, the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium automation**, **OWASP ZAP vulnerability scanning**, and **Qdrant RAG memory** into a self-improving pentest ecosystem.
+<p align="center">
+  <i>Stateful Kali Linux Execution • Hermes AI Reasoning Brain • OpenClaw Chromium Gateway • Self-Evolving Qdrant RAG Memory</i>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ANVEAI/anve-offsec/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge&logo=apache" alt="License"></a>
+  <a href="https://github.com/ANVEAI/anve-offsec"><img src="https://img.shields.io/badge/Proudly_Made_in-India_🇮🇳-FF9933.svg?style=for-the-badge" alt="Made in India"></a>
+  <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-24.0+-0db7ed.svg?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"></a>
+  <a href="https://www.kali.org/"><img src="https://img.shields.io/badge/OS-Kali_Rolling-blueviolet.svg?style=for-the-badge&logo=kalilinux&logoColor=white" alt="Kali Linux"></a>
+  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/Control_Plane-FastAPI-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI"></a>
+  <a href="https://qdrant.tech/"><img src="https://img.shields.io/badge/Memory-Qdrant_Vector_RAG-red.svg?style=for-the-badge&logo=qdrant&logoColor=white" alt="Qdrant"></a>
+</p>
+
+---
+
+## ⚡ What is `anve-offsec`?
+
+**`anve-offsec`** is a production-grade, autonomous bug bounty and offensive security platform **proudly engineered in India 🇮🇳**. Unlike traditional vulnerability scanners that rely on static regex rules, or generic LLM wrappers that hallucinate commands, `anve-offsec` operates as a **full-fledged AI security engineer**.
+
+It combines a **stateful Kali Linux core container** with the **Hermes AI Reasoning Brain**, **OpenClaw headless Chromium sidecar**, **OWASP ZAP scanning daemon**, and **Qdrant vector RAG memory**. It continuously researches target attack surfaces, dynamically writes custom exploits, retains 100% session context across multi-hour engagements, and **learns from every execution outcome**.
+
+---
+
+## 🎬 See it in Action
+
+```text
+┌──(pentest㉿anve-offsec)-[/work]
+└─$ ./scripts/hermes.sh --task "Run a full bug bounty assessment on http://dvwa:8080"
+
+[🧠 Hermes Reasoning Engine] Analyzing target http://dvwa:8080...
+[+] Initializing Recon Phase: Fingerprinting PHP/Apache stack...
+[+] Invoking OpenClaw Chromium Gateway for authentication flow...
+[+] Discovered endpoint: /vulnerabilities/sqli/ (SQL Injection)
+[+] Crafting dynamic exploit payload: 1' OR '1'='1 ...
+[+] Exploit Verified! Dumping database schema to /work/loot/sqli_dump.json
+[+] Ingesting successful payload into Qdrant Vector Memory RAG...
+[+] PHASE_COMPLETE: Recon -> Scan -> Exploit -> Report (Time: 7m 42s)
+```
+
+---
+
+## 🔥 Why `anve-offsec`? (The Feature Matrix)
+
+| Capability | 🛡️ `anve-offsec` | 🐢 Traditional Scanners (ZAP/Nessus) | 🤖 Generic LLM Wrappers |
+|---|---|---|---|
+| **Execution Environment** | **Native Kali Linux Shell + Python** | Fixed Rule Scripts | Text Snippets Only |
+| **Session Memory** | **Stateful `--resume` (Hours/Days)** | None | Single-Turn Context Limit |
+| **Self-Evolution** | **Qdrant RAG Memory (Learns from runs)** | Static Signatures | None |
+| **Browser Automation** | **OpenClaw Headless Chromium Sidecar** | Basic HTTP Crawling | Basic Puppeteer Scripts |
+| **Adaptive Escalation** | **Standard $\rightarrow$ Evasion $\rightarrow$ Custom Exploit** | Single Pass Scan | Halts on Error |
+| **Safety Governance** | **Prompt Injection Interception + Target Scope Audit** | Simple Scope Regex | No Guardrails |
+| **Operator Steering** | **Real-Time Mid-Run Instruction Queue (SSE)** | Cancel Only | Restart Session |
+
+---
+
+## 🚀 Quick Start (Up in 60 Seconds)
+
+### 1. One-Line Launch
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/ANVEAI/anve-offsec.git && cd anve-offsec
+
+# 2. Configure runtime environment
+cp .env.example .env && nano .env
+
+# 3. Spin up all microservices with Docker Compose
+docker compose up -d && ./scripts/setup-openclaw.sh
+```
+
+### 2. Open Control Plane Dashboard
+
+Open **`http://127.0.0.1:8000`** in your browser to launch agent runs, view live SSE logs, inspect captured loot, and inject instructions in real time.
+
+```bash
+# Or trigger a run directly via REST API:
+curl -X POST http://127.0.0.1:8000/api/agents/bug-bounty/run \
+  -H "Content-Type: application/json" \
+  -d '{"task":"Run full assessment on http://dvwa:8080"}'
+```
+
+---
+
+## 🏗️ System Architecture & Microservice Sidecars
+
+```mermaid
+graph TD
+    Operator([👨‍💻 Security Researcher / Operator]) -->|HTTP / SSE Stream :8000| ControlPlane[📊 FastAPI Control Plane - dashboard/app.py]
+    ControlPlane -->|Orchestrates Runs| Runner[⚙️ Engagement Runner - tools/engagement_runner.py]
+    
+    subgraph Core Platform Microservices
+        Runner -->|Native Terminal Shell| KaliCore[🛡️ Kali Linux Core Container]
+        Runner -->|DinD Container Spawning| DinD[🐳 Docker Socket / var/run/docker.sock]
+        Runner -->|API Web Scanning| ZAPDaemon[⚡ OWASP ZAP Daemon - :8090]
+        Runner -->|Headless DOM Automation| OpenClawGateway[🌐 OpenClaw Chromium - :18789]
+        Runner -->|Vector Strategy RAG| QdrantDB[🧠 Qdrant Vector DB - :6333]
+        Runner -->|Lab VPN Tunneling| OpenVPN[🔒 OpenVPN Client Container]
+    end
+
+    subgraph Safe Local Testing Sandbox
+        KaliCore -. Authorized Scans .-> DVWA[🧪 DVWA Target - :8080]
+        KaliCore -. Authorized Scans .-> Meta[🧪 Metasploitable2 Target - :8081]
+    end
+```
+
+- **DinD Worker Spawning**: Kali core mounts `/var/run/docker.sock` to spin up ephemeral sub-worker containers for isolated task flows.
+- **OOB Callback Listeners (`28000-30000`)**: Dynamic host port allocation for handling reverse shell callbacks, out-of-band HTTP verification, and blind SSRF callbacks.
+
+---
+
+## 🧠 The Hermes AI Reasoning Engine (`tools/engagement_runner.py`)
+
+Hermes acts as the stateful reasoning brain inside Kali Linux. It operates across **40+ specialized agent roles**:
+
+```
+                               ┌───────────────────────────┐
+                               │   Hermes Reasoning Brain  │
+                               └─────────────┬─────────────┘
+                                             │
+      ┌──────────────────────┬───────────────┴───────────────┬──────────────────────┐
+      │                      │                               │                      │
+      ▼                      ▼                               ▼                      ▼
+┌───────────┐      ┌───────────────────┐           ┌───────────────────┐      ┌───────────┐
+│ Core Roles│      │ OWASP Specialists │           │ MITRE ATT&CK      │      │ Safety    │
+│ - Recon   │      │ - owasp/injection │           │ - initial-access  │      │ - adviser │
+│ - Web     │      │ - owasp/auth      │           │ - cred-access     │      │ - reflect │
+│ - Exploit │      │ - owasp/ssrf      │           │ - priv-escalation │      │ - barrier │
+│ - Report  │      │ - owasp/idor      │           │ - lateral-move    │      │ (Human)   │
+└───────────┘      └───────────────────┘           └───────────────────┘      └───────────┘
+```
+
+### Session Resumption Protocol:
+Instead of sending disconnected requests, the execution runner resumes Hermes' conversation state on every turn:
+```bash
+hermes chat -Q --max-turns 30 -m kimi-k3 --resume 8f9b2a10-4c3e-4b9a-8a12-009182371abc -q "<Phase Instructions>"
+```
+This guarantees **zero loss of context** across multi-hour pentest phases.
+
+---
+
+## 🧬 Self-Evolving Strategy RAG Engine (`tools/evolution_engine.py`)
+
+Every engagement outcome is processed, embedded, and stored in **Qdrant Vector DB**:
+
+```
+[Completed Run] ──► [Scenario Matcher] ──► [Score Strategy] ──► [Qdrant RAG Ingestion]
+                                                                        │
+                                                                        ▼
+[Next Target]  ◄── [Inject Past Lessons] ◄── [Query Vector DB] ◄────────┘
+```
+
+1. **Scenario Classification**: Automatically categorizes target tasks into structured scenarios (`web-app:sql-injection`, `web-app:ssrf`, `api:idor`, `infra:ssh-enum`).
+2. **Confidence Thresholding**:
+   - `CONFIDENCE_THRESHOLD = 0.7`: RAG strategies above 70% confidence are injected into active prompts.
+   - `AUTO_PROMPT_UPDATE_THRESHOLD = 0.85`: Strategies above 85% confidence automatically update static agent prompts (`config/agents/*.prompt`).
+
+---
+
+## 🛡️ Defensive Guardrails & Safety Governance (`tools/guardrails.py`)
+
+`anve-offsec` includes production-grade security controls:
+
+- **Input Guardrails**: Protects against prompt injection by scanning for adversarial patterns (`ignore previous instructions`, `<system>`, `<root>`) and decoding base64 / unicode homographs.
+- **Output Guardrails**: Intercepts dangerous terminal commands before execution inside Kali (`rm -rf /`, `mkfs`, fork bombs, system shutdown).
+- **Data Exfiltration Interception**: Blocks access to sensitive host paths (`/etc/shadow`, `~/.ssh/id_rsa`, `~/.aws/credentials`, `~/.git-credentials`).
+- **Target Scope Authorization Framework (`config/authorized-targets.json`)**: Enforces explicit legal target scope checking (`lab`, `ctf`, `bug-bounty`, `self`, `client`). Unapproved target overrides require typed operator confirmation and are audited to `/work/memory/override-log.jsonl`.
+
+---
+
+## 🔬 Benchmark Case Studies
+
+| Benchmark Target | Assigned Agent | Automated Vulnerabilities Detected | Execution Time | Report Status |
+|---|---|---|---|---|
+| **DVWA** (`http://dvwa:8080`) | `bug-bounty` | Command Injection, SQLi, LFI, Stored XSS | **7m 42s** | Generated (`/work/loot/dvwa_report.md`) |
+| **Metasploitable2** (`:8081`) | `recon` + `exploit` | VSFTPD 2.3.4 Backdoor, UnrealIRCd, SSH Enum | **11m 15s** | Verified PoC Exploit Generated |
+| **Protected Staging Portal** | `auth-wall` + `openclaw` | Broken Object-Level Authorization (BOLA/IDOR) | **14m 20s** | Full API Assessment Complete |
 
 ---
 
 ## 📚 Multipage Technical Documentation Index
 
-Explore the detailed sub-documentation pages for deep technical specifications:
+Explore the complete sub-documentation system in [`docs/`](docs/):
 
-- 🏗️ **[Architecture & Microservice Spec](docs/ARCHITECTURE.md)** — Sidecar isolation, Docker-in-Docker worker spawning, and out-of-band listener ports (`28000–30000`).
-- 🧠 **[Hermes AI Reasoning Brain](docs/HERMES_BRAIN.md)** — Multi-turn session persistence (`--resume`), persona hierarchy across 40+ agents, and phase completion signaling.
-- 🧬 **[Self-Evolution & Vector RAG](docs/SELF_EVOLUTION.md)** — Qdrant vector memory indexing, confidence score heuristics (`0.7`/`0.85`), and strategy prompt injection.
-- 🛡️ **[Defensive Guardrails & Security](docs/GUARDRAILS_SECURITY.md)** — Prompt injection checking, destructive command prevention, exfiltration filtering, and legal scope auditing.
-- 🔬 **[Benchmark Case Studies](docs/CASE_STUDIES.md)** — Detailed execution logs & reports for DVWA OWASP Top 10, Metasploitable2, and Auth Wall OpenClaw bypass.
+- 🏗️ **[Architecture & Microservice Spec](docs/ARCHITECTURE.md)** — Sidecar topology, DinD workers, OOB listeners (`28000–30000`).
+- 🧠 **[Hermes AI Reasoning Brain Spec](docs/HERMES_BRAIN.md)** — Multi-turn session persistence, 40+ agent prompts, phase completion signals.
+- 🧬 **[Self-Evolution & Vector RAG Spec](docs/SELF_EVOLUTION.md)** — Qdrant vector memory indexing, confidence score heuristics (`0.7`/`0.85`), strategy prompt injection.
+- 🛡️ **[Defensive Guardrails & Security](docs/GUARDRAILS_SECURITY.md)** — Prompt injection filters, destructive command interception, target scope auditing.
+- 🔬 **[Benchmark Case Studies](docs/CASE_STUDIES.md)** — Comprehensive execution logs for DVWA, Metasploitable2, and Auth Wall OpenClaw bypass.
 - 🤝 **[Contribution Guidelines](docs/CONTRIBUTING.md)** — How to add new specialized agents, tools, and submit pull requests.
 
 ---
 
-## 📸 Key Capabilities at a Glance
+## 🗺️ Project Roadmap
 
-- ⏳ **Long-Running Autonomous Engagements**: Executes multi-phase pentests over hours or days with zero context loss and crash-safe state retention.
-- 🧬 **Self-Evolving Pentest Engine**: Learns from every execution outcome. Stores successful attack paths in Qdrant RAG memory to automatically improve strategy on future targets.
-- 🧠 **Hermes AI Reasoning Brain**: Multi-turn LLM agent executing complex terminal commands, security tools, and custom exploit payloads natively inside Kali Linux.
-- 🌐 **OpenClaw Browser Sidecar**: Headless Chromium gateway for complex web interaction, authentication bypass testing, and dynamic DOM crawling.
-- ⚡ **OWASP ZAP Integration**: Automated active/passive web application scanning, spidering, and REST API vulnerability discovery via sidecar daemon.
-- 🛡️ **Defensive Guardrails & Scope Control**: Input/output protection against prompt injection, destructive shell commands, and out-of-scope testing with audit logs.
-- 📊 **Real-Time Control Plane**: Modern FastAPI web interface featuring live Server-Sent Events (SSE) logs, real-time operator instruction injection, and instant run continuations.
-- 🧪 **Built-in Lab Environment**: Ships with pre-configured isolated targets (**DVWA** and **Metasploitable2**) for safe local benchmarking and vulnerability research.
-
----
-
-## ⏳ Long-Running Autonomous Research & Engagement Lifecycle
-
-Traditional pentesting scripts fail on complex targets because they time out or lose context when an approach encounters an obstacle. **anve-offsec** is engineered specifically for **unattended, long-running security engagements**:
-
-```mermaid
-flowchart TD
-    Start([🚀 Launch Engagement]) --> Phase1[Phase 1: Deep Recon & Asset Discovery]
-    Phase1 --> Check1{Phase Outcome?}
-    
-    Check1 -->|Success| Phase2[Phase 2: Baseline & Vulnerability Scan]
-    Check1 -->|Failure Attempt 1| Retry1[Attempt 2: Evasion Flags / Alternative Tooling]
-    Retry1 --> Check1
-    Check1 -->|Failure Attempt 2| Retry2[Attempt 3: Custom Python Exploit / Manual Bypass]
-    Retry2 --> Check1
-    
-    Phase2 --> Check2{Phase Outcome?}
-    Check2 -->|Success| Phase3[Phase 3: Exploitation & PoC Verification]
-    Check2 -->|Failure| Adaptation[Self-Evolution Loop: Query Qdrant RAG Memory]
-    Adaptation --> Phase2
-    
-    Phase3 --> Phase4[Phase 4: Synthesis & Reporting]
-    Phase4 --> Complete([✅ Engagement Complete & Lessons Saved])
-```
-
-### Key Long-Running Features:
-- **Adaptive 3-Attempt Retry Escalation**: When a phase fails, the runner escalates from standard tools $\rightarrow$ evasion parameters $\rightarrow$ custom Python exploits.
-- **Crash-Safe State Persistence**: Saves engagement state after every turn to `/work/dashboard-logs/<run_id>.engagement.json`. Resumes automatically on container or host restart.
-- **Live Mid-Run Operator Steering**: Inject instructions from the dashboard UI mid-engagement without interrupting LLM reasoning context.
+- [x] Multi-agent architecture with Hermes AI Brain & OpenClaw browser sidecar.
+- [x] Qdrant vector RAG strategy self-evolution engine.
+- [x] FastAPI control plane with real-time SSE streaming & mid-run instruction injection.
+- [x] Defensive guardrails & legal target scope auditing.
+- [ ] **v1.5**: Hypervisor VM snapshot integration (VMware / QEMU snapshot rollback).
+- [ ] **v2.0**: Native local model provider profiles (Ollama, vLLM, DeepSeek-V3, Qwen-2.5-Coder).
+- [ ] **v2.5**: PDF & HTML executive report export engine with custom branding.
 
 ---
 
-## ⚖️ Feature Comparison Matrix
+## 🤝 Community & Support
 
-| Feature | `anve-offsec` | Traditional Scanners (ZAP/Nessus) | Generic LLM Wrappers |
-|---|---|---|---|
-| **Execution Engine** | Native Kali Linux Shell + Python | Pre-programmed Rules | Basic Script Generation |
-| **Session Memory** | Stateful `--resume` across multi-hour runs | None | Single-turn context window |
-| **Self-Evolution** | Qdrant Vector RAG + Strategy Learning | Manual Rule Updates | None |
-| **Browser Automation** | OpenClaw Headless Chromium Sidecar | Simple HTTP Crawler | Basic Puppeteer Scripts |
-| **Safety Governance** | Prompt Injection + Destructive Command Interception | Target URL Input | No Scope Controls |
-| **Operator Steering** | Live Mid-Run Instruction Injection | Hard Stop / Start | Re-run Prompt |
-
----
-
-## 🏗️ System Architecture & Infrastructure
-
-```mermaid
-graph TD
-    User([👨‍💻 Security Researcher / Operator]) -->|HTTP / SSE :8000| Dash[📊 FastAPI Dashboard Control Plane]
-    Dash -->|Orchestrates Runs| Engine[⚙️ Engagement Runner & Execution Engines]
-    
-    subgraph Core Platform Infrastructure
-        Engine -->|Native Shell & Tools| Kali[🛡️ Kali Linux Core Container]
-        Engine -->|API Automation :8090| ZAP[⚡ OWASP ZAP Scanner Sidecar]
-        Engine -->|Headless Browser :18789| OpenClaw[🌐 OpenClaw Chromium Gateway]
-        Engine -->|RAG Vector Memory :6333| Qdrant[🧠 Qdrant Vector Storage]
-        Engine -->|Network Tunneling| VPN[🔒 OpenVPN Client Sidecar]
-    end
-
-    subgraph Safe Local Testing Sandbox
-        Kali -. Authorized Testing .-> DVWA[🧪 DVWA Target - :8080]
-        Kali -. Authorized Testing .-> Meta[🧪 Metasploitable2 Target - :8081]
-    end
-```
-
----
-
-## 🚀 Quick Start Guide
-
-### Prerequisites
-- **Docker Desktop** (macOS Apple Silicon / Linux x86_64 / Windows WSL2).
-- At least **25 GB** of free disk space (Kali image ~18 GB, OpenClaw ~3.5 GB).
-- Python 3.11+ (if running scripts outside Docker).
-
-### 1. Clone & Set Up Environment
-
-```bash
-git clone https://github.com/ANVEAI/anve-offsec.git
-cd anve-offsec
-
-# Copy environment configuration
-cp .env.example .env
-
-# Edit .env and insert your API keys (Kimi / OpenAI / Moonshot)
-nano .env
-```
-
-### 2. Build & Launch Containers
-
-```bash
-# Build and start all microservices
-docker compose up -d
-
-# Initialize OpenClaw browser sidecar configurations
-./scripts/setup-openclaw.sh
-```
-
-### 3. Open Control Plane Dashboard
-
-Navigate to `http://127.0.0.1:8000` in your web browser.
-
-```bash
-# Launch a full bug bounty engagement via API or UI:
-curl -X POST http://127.0.0.1:8000/api/agents/bug-bounty/run \
-  -H "Content-Type: application/json" \
-  -d '{"task":"Run a full bug bounty assessment on http://dvwa:8080"}'
-```
-
-### 4. Interactive Terminal Access (Hermes TUI)
-
-Want direct terminal interaction with the Hermes AI agent inside Kali?
-
-```bash
-./scripts/hermes.sh
-```
-
----
-
-## 🧰 Microservice & Sidecar Reference
-
-| Service | Container Image | Port | Description |
-|---|---|---|---|
-| **Kali Core** | `kali-ai:latest` | `28000-30000` (OOB) | Full Kali Linux rolling release with security tools and Docker socket access. |
-| **Dashboard** | `kali-dashboard:latest` | `8000` | FastAPI control plane with SSE live streaming, targets manager, and scenario builders. |
-| **OpenClaw** | `ghcr.io/openclaw/openclaw` | `18789` | Headless Chromium gateway for complex web crawling and interactive DOM automation. |
-| **OWASP ZAP** | `ghcr.io/zaproxy/zaproxy:stable` | `8090` | Active & passive web application scanner exposed via REST API. |
-| **Qdrant** | `qdrant/qdrant:latest` | `6333 / 6334` | Vector database for storing strategy patterns and past execution RAG memory. |
-| **VPN Client** | `dperson/openvpn-client` | N/A | Isolated OpenVPN tunnel container for connecting to CTF lab networks. |
-| **DVWA** | `vulnerables/web-dvwa` | `8080` | Damn Vulnerable Web Application local testing target. |
-| **Metasploitable** | `tleemcjr/metasploitable2` | `8081` | Metasploitable2 vulnerable target container. |
-
----
-
-## ⚙️ Configuration Reference
-
-Key tunables can be configured inside `.env`:
-
-| Parameter | Default | Purpose |
-|---|---|---|
-| `AGENT_TURN_TIMEOUT_SECONDS` | `1800` | Safety timeout for a single agent turn. |
-| `AGENT_ENGAGEMENT_MAX_HOURS` | `6` | Wall-clock limit per engagement session (0 = unlimited). |
-| `AGENT_MAX_PHASE_ATTEMPTS` | `3` | Maximum retry attempts per attack phase before flagging blocked. |
-| `KIMI_API_KEY` | N/A | Kimi / Moonshot AI model API Key. |
-| `OPENCLAW_GATEWAY_TOKEN` | N/A | Security secret token for the OpenClaw browser sidecar. |
+- 💬 **[GitHub Discussions](https://github.com/ANVEAI/anve-offsec/discussions)** — Feature requests, feedback, and architecture ideas.
+- 🐛 **[Issue Tracker](https://github.com/ANVEAI/anve-offsec/issues)** — Report bugs or request tool integrations.
+- 🤝 **[Contributing Guide](docs/CONTRIBUTING.md)** — Guidelines for pull requests.
 
 ---
 
@@ -199,5 +233,5 @@ This project is licensed under the **Apache License 2.0**. See the [LICENSE](LIC
 
 <p align="center">
   <b>Proudly Made in India 🇮🇳 | Built with ❤️ for the Global AI & Cybersecurity Community</b><br>
-  <i>Starred the repo? Give it a ⭐️ to support continuous development!</i>
+  <i>If you find anve-offsec useful, please give us a ⭐️ on GitHub to support continuous development!</i>
 </p>
