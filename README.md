@@ -201,13 +201,15 @@ Explore the complete sub-documentation system in [`docs/`](docs/):
 
 ## 🗺️ Project Roadmap
 
-- [x] Multi-agent architecture with Hermes AI Brain & OpenClaw browser sidecar.
-- [x] Qdrant vector RAG strategy self-evolution engine.
-- [x] FastAPI control plane with real-time SSE streaming & mid-run instruction injection.
-- [x] Defensive guardrails & legal target scope auditing.
-- [ ] **v1.5**: Hypervisor VM snapshot integration (VMware / QEMU snapshot rollback).
-- [ ] **v2.0**: Native local model provider profiles (Ollama, vLLM, DeepSeek-V3, Qwen-2.5-Coder).
-- [ ] **v2.5**: PDF & HTML executive report export engine with custom branding.
+- [x] **Multi-Agent Architecture**: Stateful Hermes AI Reasoning Brain + OpenClaw headless Chromium browser sidecar.
+- [x] **Self-Evolution Engine**: Qdrant vector RAG memory for continuous strategy learning across target runs.
+- [x] **Real-Time Control Plane**: FastAPI web dashboard featuring real-time SSE streaming & mid-run operator steering.
+- [x] **Defensive Guardrails**: Prompt injection interception, destructive command blocking, and legal scope auditing.
+- [ ] **v1.5: Plug & Play Appliance System**: Zero-config auto-discovery of local network targets, pre-baked environment defaults, and hardware acceleration (Apple Silicon Metal / NVIDIA CUDA).
+- [ ] **v2.0: Full AI OS Based GUI VM (Kali Native)**: Standalone Kali Linux ISO & OVA virtual machine appliance with built-in AI desktop control plane, QEMU/VMware snapshot rollback, and GUI assistant windows.
+- [ ] **v2.5: One-Click Cloud Deployment**: 1-click Cloud launcher scripts & Terraform/Helm templates for AWS AMI, GCP Marketplace, DigitalOcean Droplet, and Azure.
+- [ ] **v3.0: Distributed Swarm Worker Nodes**: Distributed agent worker nodes with mutual-TLS dind worker isolation across multi-region cloud providers.
+- [ ] **v3.5: Enterprise Executive Reporting**: Automated PDF & HTML executive report synthesis with custom branding and visual PoC diffs.
 
 ---
 
