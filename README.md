@@ -22,31 +22,37 @@
 
 ---
 
-## 🏛️ The ANVE Security Intelligence Platform Vision
+## 🏛️ The ANVE AI-Assisted Cybersecurity Ecosystem
 
-`anve-offsec` is the foundational offensive security pillar of the broader **ANVE Security Intelligence Platform**—an ecosystem designed to unify offensive testing, defensive operations, code security, and continuous validation:
+`anve-offsec` is the offensive security pillar of the broader **ANVE AI Cybersecurity Ecosystem**—a suite of individual, modular open-source repositories designed to cover the full spectrum of AI-assisted offensive testing and defensive protection:
 
 ```text
                      ┌─────────────────────────────────────────┐
-                     │   ANVE Security Intelligence Platform   │
+                     │    ANVE AI Cybersecurity Ecosystem      │
                      └────────────────────┬────────────────────┘
                                           │
-        ┌────────────────┬────────────────┼────────────────┬────────────────┐
-        │                │                │                │                │
-        ▼                ▼                ▼                ▼                ▼
-  ┌───────────┐    ┌───────────┐    ┌───────────┐    ┌───────────┐    ┌──────────────┐
-  │ANVE OffSec│    │ANVE CodeSec│   │ANVE CloudSec│  │ ANVE SOC  │    │ANVE Attack   │
-  │Offensive  │    │AI Code    │    │Cloud      │    │AI Security│    │Simulator     │
-  │Security   │    │Review     │    │Security   │    │Operations │    │Continuous    │
-  │[LIVE NOW] │    │[Roadmap]  │    │[Roadmap]  │    │[Roadmap]  │    │Validation    │
-  └───────────┘    └───────────┘    └───────────┘    └───────────┘    └──────────────┘
+        ┌─────────────────────────────────┴─────────────────────────────────┐
+        │                                                                   │
+        ▼                                                                   ▼
+  ┌───────────────────────────────┐                       ┌───────────────────────────────┐
+  │         anve-offsec           │                       │     prompt-sentinel-flow      │
+  │  Offensive AI Security Engine │ ◄══ AI Security ══►   │    Defensive LLM Firewall     │
+  │       [LIVE REPOSITORY]       │     Ecosystem         │       [LIVE REPOSITORY]       │
+  └───────────────┬───────────────┘                       └───────────────┬───────────────┘
+                  │                                                       │
+                  ▼                                                       ▼
+  • Stateful Kali Execution Environment                   • Drop-in LLM Proxy & Audit Engine
+  • Hermes Multi-Turn Reasoning Brain                     • Prompt Injection & Jailbreak Filters
+  • OpenClaw Chromium Browser Sidecar                     • Multi-Provider Model Routing
+  • Qdrant Vector Strategy RAG                            • Token-Spike & Risk Policy Control
 ```
 
-- 🛡️ **ANVE OffSec** *(Live)*: Autonomous offensive security, browser exploration, and evidence-backed vulnerability assessment inside Kali Linux.
+### 🌐 Ecosystem Repositories:
+- 🛡️ **[ANVE OffSec](https://github.com/ANVEAI/anve-offsec)** *(Live)*: Autonomous offensive security, browser exploration, and evidence-backed vulnerability assessment inside Kali Linux.
+- 🧱 **[Prompt Sentinel Flow](https://github.com/ANVE-AI/prompt-sentinel-flow)** *(Live)*: The open-source LLM firewall and proxy layer for auditing, inspecting, and governing LLM calls against prompt injection and data exfiltration.
 - 💻 **ANVE CodeSec** *(Roadmap)*: AI-powered static code review and SAST logic flaw detection in CI/CD pipelines.
 - ☁️ **ANVE CloudSec** *(Roadmap)*: Autonomous cloud infrastructure auditing across AWS, GCP, and Azure posture configurations.
 - 🚨 **ANVE SOC** *(Roadmap)*: AI security operations agent for automated log triage, incident response, and threat correlation.
-- 🎯 **ANVE Attack Simulator** *(Roadmap)*: Continuous breach and attack simulation (BAS) for automated defense validation.
 
 ---
 
